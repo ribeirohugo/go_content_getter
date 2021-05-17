@@ -11,7 +11,7 @@ import (
 
 const (
 	generalRegex     = "href=[\"'](http[s]?://[a-zA-Z0-9/._-]+[.](?:jpg|gif|png))[\"']"
-	titleRegexString = "<title>(.+?)</title>"
+	titleRegexString = "(?:\\<title\\>)(.*)(?:<\\/title\\>)"
 )
 
 type Getter struct {
@@ -62,8 +62,8 @@ func (g *Getter) Get() ([]string, string, error) {
 	titleMatch := titleRegex.FindStringSubmatch(bodyString)
 
 	title := ""
-	if len(titleMatch) > 0 {
-		title = strings.TrimLeft(strings.TrimRight(titleMatch[0], "</title>"), "<title>")
+	if len(titleMatch) > 1 {
+		title = titleMatch[1]
 	}
 
 	var images []string
