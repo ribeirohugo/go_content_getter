@@ -7,8 +7,6 @@ import (
 	"os"
 	"regexp"
 	"strings"
-
-	"github.com/ribeirohugo/go_image_getter/internal/config"
 )
 
 const (
@@ -21,10 +19,16 @@ type Getter struct {
 	url   string
 }
 
-func New(cfg config.Config) Getter {
+func New(url string, regex ...string) Getter {
+
+	regexExpression := ""
+	if len(regex) > 0 {
+		regexExpression = regex[0]
+	}
+
 	return Getter{
-		regex: cfg.Regex,
-		url:   cfg.Url,
+		regex: regexExpression,
+		url:   url,
 	}
 }
 
