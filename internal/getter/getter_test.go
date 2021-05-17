@@ -41,10 +41,8 @@ func TestGetImageName(t *testing.T) {
 func TestGetter_Get(t *testing.T) {
 
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-		// Send response to be tested
 		rw.Write([]byte(pageRequest))
 	}))
-	// Close the server when test finishes
 	defer server.Close()
 
 	getter := Getter{
