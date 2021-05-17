@@ -19,9 +19,15 @@ type Getter struct {
 	url   string
 }
 
-func New(url string, regex string) Getter {
+func New(url string, regex ...string) Getter {
+
+	regexExpression := ""
+	if len(regex) > 0 {
+		regexExpression = regex[0]
+	}
+
 	return Getter{
-		regex: regex,
+		regex: regexExpression,
 		url:   url,
 	}
 }
