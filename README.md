@@ -19,7 +19,9 @@ By defining a Regex pattern it is possible to adjust fetched image addresses or 
 ### 2.1. Example
 
 ```
-getter := New("https://domain.com")
+cfg := config.Config{Url: "https://domain.com"}
+
+getter := New(cfg)
 
 title, images, err := getter.Get()
 
