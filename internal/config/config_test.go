@@ -6,13 +6,21 @@ import (
 	"testing"
 )
 
+const (
+	pathTest  = "/path/to"
+	regexTest = "[ab]"
+	urlTest   = "sub.domain"
+)
+
 var configContent = `regex = "[ab]"
-url="sub.domain"
+url = "sub.domain"
+path = "/path/to"
 `
 
 var configTest = Config{
-	Regex: "[ab]",
-	Url:   "sub.domain",
+	Path:  pathTest,
+	Regex: regexTest,
+	Url:   urlTest,
 }
 
 func TestConfig(t *testing.T) {

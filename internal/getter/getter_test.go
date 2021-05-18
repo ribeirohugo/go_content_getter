@@ -1,6 +1,7 @@
 package getter
 
 import (
+	"github.com/ribeirohugo/go_image_getter/internal/config"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -9,6 +10,7 @@ import (
 const (
 	regexTest = "[abc]"
 	urlTest   = "sub.domain"
+	pathTest  = "path/to/"
 )
 
 var pageRequest = `<title>Page Title</title>
@@ -18,11 +20,18 @@ var pageRequest = `<title>Page Title</title>
 
 func TestNewGetter(t *testing.T) {
 	expected := Getter{
+		path:  pathTest,
 		regex: regexTest,
 		url:   urlTest,
 	}
 
-	result := New(urlTest, regexTest)
+	cfg := config.Config{
+		Path:  pathTest,
+		Regex: regexTest,
+		Url:   urlTest,
+	}
+
+	result := New(cfg)
 
 	if result != expected {
 		t.Errorf("Wrong getter return,\n Got: %v,\n Want: %v.", result, expected)
