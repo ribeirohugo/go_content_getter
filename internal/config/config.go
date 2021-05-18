@@ -8,6 +8,7 @@ import (
 )
 
 type Config struct {
+	Path  string `toml:"path"`
 	Regex string `toml:"regex"`
 	Url   string `toml:"url"`
 }

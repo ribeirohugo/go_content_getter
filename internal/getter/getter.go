@@ -7,6 +7,8 @@ import (
 	"os"
 	"regexp"
 	"strings"
+
+	"github.com/ribeirohugo/go_image_getter/internal/config"
 )
 
 const (
@@ -17,18 +19,20 @@ const (
 type Getter struct {
 	regex string
 	url   string
+	path  string
 }
 
-func New(url string, regex ...string) Getter {
+func New(cfg config.Config) Getter {
 
-	regexExpression := ""
-	if len(regex) > 0 {
-		regexExpression = regex[0]
+	regexExpression := generalRegex
+	if cfg.Regex != "" {
+		regexExpression = cfg.Regex
 	}
 
 	return Getter{
 		regex: regexExpression,
-		url:   url,
+		url:   cfg.Url,
+		path:  cfg.Path,
 	}
 }
 
@@ -77,8 +81,11 @@ func (g *Getter) Get() ([]string, string, error) {
 func (g *Getter) Download(folder string, images []string) error {
 	_, err := os.Stat(folder)
 
+	fileDir := g.path + folder + string(os.PathSeparator)
+
+	//Create Directory
 	if os.IsNotExist(err) {
-		err := os.MkdirAll(folder, 0755)
+		err := os.MkdirAll(fileDir, 0755)
 		if err != nil {
 			return err
 		}
@@ -94,7 +101,7 @@ func (g *Getter) Download(folder string, images []string) error {
 			name := getImageName(image)
 
 			//Create an empty file
-			file, err := os.Create(folder + "/" + name)
+			file, err := os.Create(fileDir + name)
 			if err != nil {
 				return err
 			}
@@ -107,7 +114,6 @@ func (g *Getter) Download(folder string, images []string) error {
 			}
 		}
 	}
-
 	return nil
 }
 
