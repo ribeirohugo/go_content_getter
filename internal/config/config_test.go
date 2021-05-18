@@ -18,6 +18,7 @@ path = "/path/to"
 `
 
 var configTest = Config{
+	Host:  defaultHost,
 	Path:  pathTest,
 	Regex: regexTest,
 	Url:   urlTest,

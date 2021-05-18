@@ -7,7 +7,10 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
+const defaultHost = "localhost:8080"
+
 type Config struct {
+	Host  string `toml:"host"`
 	Path  string `toml:"path"`
 	Regex string `toml:"regex"`
 	Url   string `toml:"url"`
@@ -25,7 +28,9 @@ func Load(filePath string) (Config, error) {
 	}
 	_ = file.Close()
 
-	var config Config
+	config := Config{
+		Host: "localhost:8080",
+	}
 
 	err = toml.Unmarshal(bytes, &config)
 	if err != nil {
