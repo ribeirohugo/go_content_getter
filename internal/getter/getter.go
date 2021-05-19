@@ -38,8 +38,15 @@ func New(cfg config.Config) Getter {
 
 // Returns slice with all images URL, page title
 // If any error occurs it returns empty
-func (g *Getter) Get() ([]string, string, error) {
-	response, err := http.Get(g.url)
+func (g Getter) Get() ([]string, string, error) {
+	return g.GetFromUrl(g.url)
+}
+
+// Requires Url to get content from
+// Returns slice with all images URL, page title
+// If any error occurs it returns empty
+func (g Getter) GetFromUrl(url string) ([]string, string, error) {
+	response, err := http.Get(url)
 	if err != nil {
 		return []string{}, "", nil
 	}
@@ -78,7 +85,7 @@ func (g *Getter) Get() ([]string, string, error) {
 	return images, title, nil
 }
 
-func (g *Getter) Download(folder string, images []string) error {
+func (g Getter) Download(folder string, images []string) error {
 	_, err := os.Stat(folder)
 
 	fileDir := g.path + folder + string(os.PathSeparator)

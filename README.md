@@ -9,6 +9,7 @@ Configurations are stored in program root directory ``config.toml`` file.
 
 | Parameter | Description | Type | Default | Required |
 |:---|:---|:---|:---|:---|
+| ``host`` | Host and port used for server mode application. | `string` | `localhost:8080` | **NO** |
 | ``path`` | Destiny path where files will be stored. | `string` | ` ` | **NO** |
 | ``regex`` | Fill this to replace regex expression to get content address from defined ``url``. | `string` | - | **NO** |
 | ``url`` | Url address to get all images or content. | `string` | ` ` | **YES** |
