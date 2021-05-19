@@ -28,7 +28,7 @@ func New(getter Getter, host string) *httpServer {
 	return s
 }
 
-func (h *httpServer) GinGonic() error {
+func (h *httpServer) InitiateServer() error {
 	router := gin.Default()
 
 	router.Static("/assets", "./assets")

@@ -20,5 +20,8 @@ func main() {
 
 	serverHttp := server.New(imageGetter, cfg.Host)
 
-	serverHttp.GinGonic()
+	err = serverHttp.InitiateServer()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
