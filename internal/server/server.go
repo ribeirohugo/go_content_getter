@@ -50,6 +50,7 @@ func (h *httpServer) GinGonic() error {
 			c.HTML(http.StatusOK, "index.html", gin.H{
 				"message": err.Error(),
 			})
+			return
 		}
 
 		err = h.getter.Download(title, images)
@@ -57,6 +58,7 @@ func (h *httpServer) GinGonic() error {
 			c.HTML(http.StatusOK, "index.html", gin.H{
 				"message": err.Error(),
 			})
+			return
 		}
 
 		c.HTML(http.StatusOK, "index.html", gin.H{
