@@ -1,6 +1,6 @@
-# Go Image Getter
+# Go Content Getter
 
-**Go Image Getter** is a Go application that allows to download all images from a specified Url.
+**Go Content Getter** is a Go application that allows to download all images or content from a specified Url.
 By defining a Regex pattern it is possible to adjust fetched image addresses or get different kind of content addresses.
 
 ## 1. Configurations
