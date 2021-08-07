@@ -1,10 +1,11 @@
 package getter
 
 import (
-	"github.com/ribeirohugo/go_image_getter/internal/config"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/ribeirohugo/go_image_getter/internal/config"
 )
 
 const (
