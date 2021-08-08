@@ -25,19 +25,18 @@ var configTest = Config{
 }
 
 func TestConfig(t *testing.T) {
-
 	tempFile, err := createTempFile()
 	if err != nil {
 		t.Fatalf("Unexpected error creating temp file: %v.", err.Error())
 	}
-
-	defer os.Remove(tempFile.Name())
 
 	cfg, _ := Load(tempFile.Name())
 
 	if cfg != configTest {
 		t.Errorf("Wrong config file output,\n got: %v,\n want: %v.", cfg, configTest)
 	}
+
+	os.Remove(tempFile.Name())
 
 	tempFile.Close()
 }
