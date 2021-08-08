@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/ribeirohugo/go_image_getter/internal/config"
+	"github.com/ribeirohugo/go_content_getter/internal/config"
 )
 
 const (

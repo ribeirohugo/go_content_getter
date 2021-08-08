@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/ribeirohugo/go_image_getter/internal/config"
-	"github.com/ribeirohugo/go_image_getter/internal/getter"
-	"github.com/ribeirohugo/go_image_getter/internal/server"
+	"github.com/ribeirohugo/go_content_getter/internal/config"
+	"github.com/ribeirohugo/go_content_getter/internal/getter"
+	"github.com/ribeirohugo/go_content_getter/internal/server"
 )
 
 const configFile = "config.toml"

@@ -1,4 +1,4 @@
-module github.com/ribeirohugo/go_image_getter
+module github.com/ribeirohugo/go_content_getter
 
 go 1.16
 
