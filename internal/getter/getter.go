@@ -30,7 +30,7 @@ func New(cfg config.Config) Getter {
 
 	return Getter{
 		regex: regexExpression,
-		url:   cfg.Url,
+		url:   cfg.URL,
 		path:  cfg.Path,
 	}
 }
@@ -124,9 +124,9 @@ func (g Getter) Download(folder string, images []string) error {
 }
 
 func getImageName(url string) string {
-	splitUrl := strings.Split(url, "/")
+	splitURL := strings.Split(url, "/")
 
-	length := len(splitUrl)
+	length := len(splitURL)
 
-	return splitUrl[length-1]
+	return splitURL[length-1]
 }

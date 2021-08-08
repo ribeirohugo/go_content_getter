@@ -29,7 +29,7 @@ func TestNewGetter(t *testing.T) {
 	cfg := config.Config{
 		Path:  pathTest,
 		Regex: regexTest,
-		Url:   urlTest,
+		URL:   urlTest,
 	}
 
 	result := New(cfg)

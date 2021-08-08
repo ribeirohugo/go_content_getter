@@ -13,7 +13,7 @@ type Config struct {
 	Host  string `toml:"host"`
 	Path  string `toml:"path"`
 	Regex string `toml:"regex"`
-	Url   string `toml:"url"`
+	URL   string `toml:"url"`
 }
 
 func Load(filePath string) (Config, error) {

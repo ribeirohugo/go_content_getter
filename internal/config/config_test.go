@@ -21,7 +21,7 @@ var configTest = Config{
 	Host:  defaultHost,
 	Path:  pathTest,
 	Regex: regexTest,
-	Url:   urlTest,
+	URL:   urlTest,
 }
 
 func TestConfig(t *testing.T) {
