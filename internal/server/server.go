@@ -8,7 +8,7 @@ import (
 
 type Getter interface {
 	Get() ([]string, string, error)
-	GetFromUrl(url string) ([]string, string, error)
+	GetFromURL(url string) ([]string, string, error)
 	Download(folder string, images []string) error
 }
 
@@ -45,7 +45,7 @@ func (h *httpServer) InitiateServer() error {
 		c.Request.ParseForm()
 		url := c.Request.PostForm["url_parse"][0]
 
-		images, title, err := h.getter.GetFromUrl(url)
+		images, title, err := h.getter.GetFromURL(url)
 		if err != nil {
 			c.HTML(http.StatusOK, "index.html", gin.H{
 				"message": err.Error(),

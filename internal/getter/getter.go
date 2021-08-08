@@ -23,7 +23,6 @@ type Getter struct {
 }
 
 func New(cfg config.Config) Getter {
-
 	regexExpression := generalRegex
 	if cfg.Regex != "" {
 		regexExpression = cfg.Regex
@@ -39,13 +38,13 @@ func New(cfg config.Config) Getter {
 // Returns slice with all images URL, page title
 // If any error occurs it returns empty
 func (g Getter) Get() ([]string, string, error) {
-	return g.GetFromUrl(g.url)
+	return g.GetFromURL(g.url)
 }
 
 // Requires Url to get content from
 // Returns slice with all images URL, page title
 // If any error occurs it returns empty
-func (g Getter) GetFromUrl(url string) ([]string, string, error) {
+func (g Getter) GetFromURL(url string) ([]string, string, error) {
 	response, err := http.Get(url)
 	if err != nil {
 		return []string{}, "", nil

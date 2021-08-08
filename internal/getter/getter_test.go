@@ -49,9 +49,11 @@ func TestGetImageName(t *testing.T) {
 }
 
 func TestGetter_Get(t *testing.T) {
-
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-		rw.Write([]byte(pageRequest))
+		_, err := rw.Write([]byte(pageRequest))
+		if err != nil {
+			t.Errorf("Unexpected error while writing: %s", err)
+		}
 	}))
 	defer server.Close()
 
