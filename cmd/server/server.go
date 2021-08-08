@@ -18,9 +18,9 @@ func main() {
 
 	imageGetter := getter.New(cfg)
 
-	serverHttp := server.New(imageGetter, cfg.Host)
+	serverHTTP := server.New(imageGetter, cfg.Host)
 
-	err = serverHttp.InitiateServer()
+	err = serverHTTP.InitiateServer()
 	if err != nil {
 		log.Fatal(err)
 	}

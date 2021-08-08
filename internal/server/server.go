@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -8,7 +9,7 @@ import (
 
 type Getter interface {
 	Get() ([]string, string, error)
-	GetFromUrl(url string) ([]string, string, error)
+	GetFromURL(url string) ([]string, string, error)
 	Download(folder string, images []string) error
 }
 
@@ -42,10 +43,14 @@ func (h *httpServer) InitiateServer() error {
 	})
 
 	router.POST("/", func(c *gin.Context) {
-		c.Request.ParseForm()
+		err := c.Request.ParseForm()
+		if err != nil {
+			log.Println(err)
+		}
+
 		url := c.Request.PostForm["url_parse"][0]
 
-		images, title, err := h.getter.GetFromUrl(url)
+		images, title, err := h.getter.GetFromURL(url)
 		if err != nil {
 			c.HTML(http.StatusOK, "index.html", gin.H{
 				"message": err.Error(),

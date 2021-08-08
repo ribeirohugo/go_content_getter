@@ -21,12 +21,14 @@ var configTest = Config{
 	Host:  defaultHost,
 	Path:  pathTest,
 	Regex: regexTest,
-	Url:   urlTest,
+	URL:   urlTest,
 }
 
 func TestConfig(t *testing.T) {
-
-	tempFile, _ := createTempFile()
+	tempFile, err := createTempFile()
+	if err != nil {
+		t.Fatalf("Unexpected error creating temp file: %v.", err.Error())
+	}
 
 	defer os.Remove(tempFile.Name())
 
@@ -40,13 +42,10 @@ func TestConfig(t *testing.T) {
 }
 
 func createTempFile() (*os.File, error) {
-
 	tempFile, err := ioutil.TempFile("", "config.toml")
 	if err != nil {
 		return nil, err
 	}
-
-	defer os.Remove(tempFile.Name())
 
 	_, err = tempFile.WriteString(configContent)
 	if err != nil {

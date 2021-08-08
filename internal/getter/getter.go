@@ -23,7 +23,6 @@ type Getter struct {
 }
 
 func New(cfg config.Config) Getter {
-
 	regexExpression := generalRegex
 	if cfg.Regex != "" {
 		regexExpression = cfg.Regex
@@ -31,7 +30,7 @@ func New(cfg config.Config) Getter {
 
 	return Getter{
 		regex: regexExpression,
-		url:   cfg.Url,
+		url:   cfg.URL,
 		path:  cfg.Path,
 	}
 }
@@ -39,13 +38,13 @@ func New(cfg config.Config) Getter {
 // Returns slice with all images URL, page title
 // If any error occurs it returns empty
 func (g Getter) Get() ([]string, string, error) {
-	return g.GetFromUrl(g.url)
+	return g.GetFromURL(g.url)
 }
 
 // Requires Url to get content from
 // Returns slice with all images URL, page title
 // If any error occurs it returns empty
-func (g Getter) GetFromUrl(url string) ([]string, string, error) {
+func (g Getter) GetFromURL(url string) ([]string, string, error) {
 	response, err := http.Get(url)
 	if err != nil {
 		return []string{}, "", nil
@@ -125,9 +124,9 @@ func (g Getter) Download(folder string, images []string) error {
 }
 
 func getImageName(url string) string {
-	splitUrl := strings.Split(url, "/")
+	splitURL := strings.Split(url, "/")
 
-	length := len(splitUrl)
+	length := len(splitURL)
 
-	return splitUrl[length-1]
+	return splitURL[length-1]
 }
