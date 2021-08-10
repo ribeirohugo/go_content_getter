@@ -37,8 +37,10 @@ getter.Download(title, images)
 ``console``, ``runnable`` and ``server`` are the three main files that allows to create a **Content Getter** with
 its different ways of getting content.
 
-* ``console`` - Allows to continuously insert URLs in a command line console to fetch their content, until operation is terminated by user.
+* ``console`` - Allows to continuously insert URLs in a command line console to fetch their content, until operation is
+terminated by user.
 
 * ``runnable`` - Allows to execute the application once and fetch all content based on ``config.toml`` URL attribute defined.
 
-* ``server`` - Creates a Web Server based on config.toml attributes and allows users to insert content URLs through an HTML web page form.
+* ``server`` - Creates a Web Server based on config.toml attributes and allows users to insert content URLs through an
+HTML web page form.
