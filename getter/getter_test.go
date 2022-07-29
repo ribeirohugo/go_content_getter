@@ -5,13 +5,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/ribeirohugo/go_content_getter/internal/config"
-)
-
-const (
-	regexTest = "[abc]"
-	urlTest   = "sub.domain"
-	pathTest  = "path/to/"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var pageRequest = `<title>Page Title</title>
@@ -20,40 +15,61 @@ var pageRequest = `<title>Page Title</title>
 `
 
 func TestNewGetter(t *testing.T) {
-	expected := Getter{
-		path:  pathTest,
-		regex: regexTest,
-		url:   urlTest,
-	}
+	const (
+		contentRegexTest = "[abc]"
+		titleRegexTest   = "title"
+		pathTest         = "path/to/"
+		urlTest          = "sub.domain"
+	)
 
-	cfg := config.Config{
-		Path:  pathTest,
-		Regex: regexTest,
-		URL:   urlTest,
-	}
+	t.Run("with content and title regex filled", func(t *testing.T) {
+		expected := Getter{
+			contentRegex: contentRegexTest,
+			titleRegex:   titleRegexTest,
+			path:         pathTest,
+			url:          urlTest,
+		}
 
-	result := New(cfg.Regex, cfg.URL, cfg.Path)
+		result := New(urlTest, pathTest, contentRegexTest, titleRegexTest)
+		assert.Equal(t, expected, result)
+	})
 
-	if result != expected {
-		t.Errorf("Wrong getter return,\n Got: %v,\n Want: %v.", result, expected)
-	}
+	t.Run("with content regex empty", func(t *testing.T) {
+		expected := Getter{
+			contentRegex: defaultContentRegex,
+			titleRegex:   titleRegexTest,
+			path:         pathTest,
+			url:          urlTest,
+		}
+
+		result := New(urlTest, pathTest, "", titleRegexTest)
+		assert.Equal(t, expected, result)
+	})
+
+	t.Run("with title regex empty", func(t *testing.T) {
+		expected := Getter{
+			contentRegex: contentRegexTest,
+			titleRegex:   defaultTitleRegex,
+			path:         pathTest,
+			url:          urlTest,
+		}
+
+		result := New(urlTest, pathTest, contentRegexTest, "")
+		assert.Equal(t, expected, result)
+	})
 }
 
 func TestGetImageName(t *testing.T) {
 	expected := "image.png"
 	result := getImageName("http://sub.domain/image.png")
 
-	if result != expected {
-		t.Errorf("Wrong image name return,\n Got: %s,\n Want: %s.", result, expected)
-	}
+	assert.Equal(t, expected, result)
 }
 
 func TestGetter_Get(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		_, err := rw.Write([]byte(pageRequest))
-		if err != nil {
-			t.Errorf("Unexpected error while writing: %s", err)
-		}
+		require.NoError(t, err)
 	}))
 	defer server.Close()
 
@@ -62,19 +78,7 @@ func TestGetter_Get(t *testing.T) {
 	}
 
 	images, title, err := getter.Get()
-
-	length := len(images)
-	expected := 1
-	if length != 1 {
-		t.Errorf("Wrong images slice length return,\n Got: %d,\n Want: %d.", length, expected)
-	}
-
-	expectedTitle := "Page Title"
-	if expectedTitle != title {
-		t.Errorf("Wrong page title return,\n Got: %s,\n Want: %s.", title, expectedTitle)
-	}
-
-	if err != nil {
-		t.Errorf("Wrong image name return,\n Got: %v,\n Want: %v.", err, nil)
-	}
+	assert.Len(t, images, 1)
+	assert.Equal(t, "Page Title", title)
+	assert.NoError(t, err)
 }

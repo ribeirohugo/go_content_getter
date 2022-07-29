@@ -10,27 +10,39 @@ import (
 )
 
 const (
-	defaultRegex      = "href=[\"'](http[s]?://[a-zA-Z0-9/._-]+[.](?:jpg|gif|png))[\"']"
-	defaultTitleRegex = "(?:\\<title\\>)(.*)(?:<\\/title\\>)"
+	defaultContentRegex = "href=[\"'](http[s]?://[a-zA-Z0-9/._-]+[.](?:jpg|gif|png))[\"']"
+	defaultTitleRegex   = "(?:\\<title\\>)(.*)(?:<\\/title\\>)"
 )
 
-// Getter
+// Getter holds content content Getter struct
 type Getter struct {
-	regex string
-	url   string
-	path  string
+	contentRegex string
+	titleRegex   string
+	path         string
+	url          string
 }
 
-func New(regex string, url string, path string) Getter {
-	regexExpression := defaultRegex
-	if regex != "" {
-		regexExpression = regex
+// New is a a Getter constructor. It requires:
+// A url string from a web page to look for content.
+// A path string to define where to store fetched content.
+// A contentRegex to select to download. (Optional field)
+// A titleRegex to to select folder title to fetched content. (Optional field)
+func New(url string, path string, contentRegex string, titleRegex string) Getter {
+	contentRegexExpression := defaultContentRegex
+	if contentRegex != "" {
+		contentRegexExpression = contentRegex
+	}
+
+	titleRegexExpression := defaultTitleRegex
+	if titleRegex != "" {
+		titleRegexExpression = titleRegex
 	}
 
 	return Getter{
-		regex: regexExpression,
-		url:   url,
-		path:  path,
+		contentRegex: contentRegexExpression,
+		titleRegex:   titleRegexExpression,
+		path:         path,
+		url:          url,
 	}
 }
 
@@ -59,15 +71,20 @@ func (g Getter) GetFromURL(url string) ([]string, string, error) {
 	}
 	bodyString := string(bodyBytes)
 
-	imgRegex := g.regex
-	if imgRegex == "" {
-		imgRegex = defaultRegex
+	contentRegexString := g.contentRegex
+	if contentRegexString == "" {
+		contentRegexString = defaultContentRegex
 	}
 
-	imageRegex := regexp.MustCompile(imgRegex)
-	titleRegex := regexp.MustCompile(defaultTitleRegex)
+	titleRegexString := g.contentRegex
+	if titleRegexString == "" {
+		titleRegexString = defaultTitleRegex
+	}
 
-	imageMatch := imageRegex.FindAllStringSubmatch(bodyString, -1)
+	contentRegex := regexp.MustCompile(contentRegexString)
+	titleRegex := regexp.MustCompile(titleRegexString)
+
+	contentMatch := contentRegex.FindAllStringSubmatch(bodyString, -1)
 	titleMatch := titleRegex.FindStringSubmatch(bodyString)
 
 	title := ""
@@ -76,7 +93,7 @@ func (g Getter) GetFromURL(url string) ([]string, string, error) {
 	}
 
 	var images []string
-	for _, image := range imageMatch {
+	for _, image := range contentMatch {
 		images = append(images, image[1])
 	}
 
@@ -105,14 +122,14 @@ func (g Getter) Download(folder string, images []string) error {
 		if response.StatusCode == http.StatusOK {
 			name := getImageName(image)
 
-			//Create an empty file
+			// Create an empty file
 			file, err := os.Create(fileDir + name)
 			if err != nil {
 				return err
 			}
 			defer file.Close()
 
-			//Write file content
+			// Write file content
 			_, err = io.Copy(file, response.Body)
 			if err != nil {
 				return err
