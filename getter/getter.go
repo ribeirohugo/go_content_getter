@@ -7,31 +7,30 @@ import (
 	"os"
 	"regexp"
 	"strings"
-
-	"github.com/ribeirohugo/go_content_getter/internal/config"
 )
 
 const (
-	generalRegex     = "href=[\"'](http[s]?://[a-zA-Z0-9/._-]+[.](?:jpg|gif|png))[\"']"
-	titleRegexString = "(?:\\<title\\>)(.*)(?:<\\/title\\>)"
+	defaultRegex      = "href=[\"'](http[s]?://[a-zA-Z0-9/._-]+[.](?:jpg|gif|png))[\"']"
+	defaultTitleRegex = "(?:\\<title\\>)(.*)(?:<\\/title\\>)"
 )
 
+// Getter
 type Getter struct {
 	regex string
 	url   string
 	path  string
 }
 
-func New(cfg config.Config) Getter {
-	regexExpression := generalRegex
-	if cfg.Regex != "" {
-		regexExpression = cfg.Regex
+func New(regex string, url string, path string) Getter {
+	regexExpression := defaultRegex
+	if regex != "" {
+		regexExpression = regex
 	}
 
 	return Getter{
 		regex: regexExpression,
-		url:   cfg.URL,
-		path:  cfg.Path,
+		url:   url,
+		path:  path,
 	}
 }
 
@@ -62,11 +61,11 @@ func (g Getter) GetFromURL(url string) ([]string, string, error) {
 
 	imgRegex := g.regex
 	if imgRegex == "" {
-		imgRegex = generalRegex
+		imgRegex = defaultRegex
 	}
 
 	imageRegex := regexp.MustCompile(imgRegex)
-	titleRegex := regexp.MustCompile(titleRegexString)
+	titleRegex := regexp.MustCompile(defaultTitleRegex)
 
 	imageMatch := imageRegex.FindAllStringSubmatch(bodyString, -1)
 	titleMatch := titleRegex.FindStringSubmatch(bodyString)
