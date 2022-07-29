@@ -32,7 +32,7 @@ func TestNewGetter(t *testing.T) {
 		URL:   urlTest,
 	}
 
-	result := New(cfg)
+	result := New(cfg.Regex, cfg.URL, cfg.Path)
 
 	if result != expected {
 		t.Errorf("Wrong getter return,\n Got: %v,\n Want: %v.", result, expected)
