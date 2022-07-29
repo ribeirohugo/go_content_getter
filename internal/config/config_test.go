@@ -1,42 +1,43 @@
 package config
 
 import (
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"io/ioutil"
 	"os"
 	"testing"
 )
 
-const (
-	pathTest  = "/path/to"
-	regexTest = "[ab]"
-	urlTest   = "sub.domain"
-)
-
-var configContent = `regex = "[ab]"
+var configContent = `contentRegex = "[ab]"
+titleRegex = "title"
 url = "sub.domain"
 path = "/path/to"
 `
 
-var configTest = Config{
-	Host:  defaultHost,
-	Path:  pathTest,
-	Regex: regexTest,
-	URL:   urlTest,
-}
-
 func TestConfig(t *testing.T) {
-	tempFile, err := createTempFile()
-	if err != nil {
-		t.Fatalf("Unexpected error creating temp file: %v.", err.Error())
+	const (
+		contentRegexTest = "[ab]"
+		titleRegexTest   = "title"
+		pathTest         = "/path/to"
+		urlTest          = "sub.domain"
+	)
+
+	var configTest = Config{
+		ContentRegex: contentRegexTest,
+		TitleRegex:   titleRegexTest,
+		Host:         defaultHost,
+		Path:         pathTest,
+		URL:          urlTest,
 	}
+
+	tempFile, err := createTempFile()
+	require.NoError(t, err)
 
 	defer os.Remove(tempFile.Name())
 
-	cfg, _ := Load(tempFile.Name())
-
-	if cfg != configTest {
-		t.Errorf("Wrong config file output,\n got: %v,\n want: %v.", cfg, configTest)
-	}
+	cfg, err := Load(tempFile.Name())
+	require.NoError(t, err)
+	assert.Equal(t, cfg, configTest)
 
 	tempFile.Close()
 }

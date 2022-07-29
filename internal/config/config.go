@@ -10,10 +10,11 @@ import (
 const defaultHost = "localhost:8080"
 
 type Config struct {
-	Host  string `toml:"host"`
-	Path  string `toml:"path"`
-	Regex string `toml:"regex"`
-	URL   string `toml:"url"`
+	ContentRegex string `toml:"contentRegex"`
+	TitleRegex   string `toml:"titleRegex"`
+	Host         string `toml:"host"`
+	Path         string `toml:"path"`
+	URL          string `toml:"url"`
 }
 
 func Load(filePath string) (Config, error) {
