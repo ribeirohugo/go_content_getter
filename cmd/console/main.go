@@ -7,8 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/ribeirohugo/go_content_getter/getter"
 	"github.com/ribeirohugo/go_content_getter/internal/config"
-	"github.com/ribeirohugo/go_content_getter/internal/getter"
 )
 
 const (
@@ -22,7 +22,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	downloader := getter.New(cfg)
+	downloader := getter.New(cfg.Regex, cfg.URL, cfg.Path)
 
 	// Create a signal
 	done := make(chan os.Signal, 1)

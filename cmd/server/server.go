@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
+	"github.com/ribeirohugo/go_content_getter/getter"
 	"github.com/ribeirohugo/go_content_getter/internal/config"
-	"github.com/ribeirohugo/go_content_getter/internal/getter"
 	"github.com/ribeirohugo/go_content_getter/internal/server"
 )
 
@@ -16,7 +16,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	imageGetter := getter.New(cfg)
+	imageGetter := getter.New(cfg.Regex, cfg.URL, cfg.Path)
 
 	serverHTTP := server.New(imageGetter, cfg.Host)
 

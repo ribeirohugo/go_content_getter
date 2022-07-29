@@ -3,8 +3,8 @@ package main
 import (
 	"log"
 
+	"github.com/ribeirohugo/go_content_getter/getter"
 	"github.com/ribeirohugo/go_content_getter/internal/config"
-	"github.com/ribeirohugo/go_content_getter/internal/getter"
 )
 
 const (
@@ -17,7 +17,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	downloader := getter.New(cfg)
+	downloader := getter.New(cfg.Regex, cfg.URL, cfg.Path)
 
 	images, title, err := downloader.Get()
 	if err != nil {
