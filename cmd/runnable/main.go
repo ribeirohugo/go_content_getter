@@ -17,7 +17,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	downloader := getter.New(cfg.Regex, cfg.URL, cfg.Path)
+	downloader := getter.New(cfg.URL, cfg.Path, cfg.Regex, "")
 
 	images, title, err := downloader.Get()
 	if err != nil {
