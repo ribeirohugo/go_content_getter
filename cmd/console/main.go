@@ -7,8 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/ribeirohugo/go_content_getter/getter"
 	"github.com/ribeirohugo/go_content_getter/internal/config"
-	"github.com/ribeirohugo/go_content_getter/internal/getter"
 )
 
 const (
