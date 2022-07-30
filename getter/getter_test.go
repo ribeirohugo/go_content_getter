@@ -3,15 +3,16 @@ package getter
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-var pageRequest = `<title>Page Title</title>
+const pageRequest = `<title>Page Title</title>
 
-<a href="https://sub.domain/image.png">Image</a>
+<a href="image.png">Image</a>
 `
 
 func TestNewGetter(t *testing.T) {
@@ -73,12 +74,39 @@ func TestGetter_Get(t *testing.T) {
 	}))
 	defer server.Close()
 
+	const (
+		regexTest = "href=[\"']([a-zA-Z0-9/._-]+[.](?:jpg|gif|png))[\"']"
+	)
+
 	getter := Getter{
-		url: server.URL,
+		url:          server.URL,
+		contentRegex: regexTest,
 	}
 
 	images, title, err := getter.Get()
 	assert.Len(t, images, 1)
 	assert.Equal(t, "Page Title", title)
 	assert.NoError(t, err)
+}
+
+func TestGetter_Download(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		_, err := rw.Write([]byte("pageBody"))
+		require.NoError(t, err)
+	}))
+	defer server.Close()
+
+	const (
+		folderName = "example"
+	)
+
+	getter := Getter{}
+
+	err := getter.Download(folderName, []string{server.URL})
+	assert.NoError(t, err)
+
+	// fileToRemove := fmt.Sprintf("%s%s127.0.0.1",folderName,string(os.PathSeparator))
+
+	err = os.RemoveAll(folderName)
+	require.NoError(t, err)
 }
