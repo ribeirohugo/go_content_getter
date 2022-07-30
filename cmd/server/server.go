@@ -16,7 +16,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	imageGetter := getter.New(cfg.Regex, cfg.URL, cfg.Path)
+	imageGetter := getter.New(cfg.URL, cfg.Path, cfg.ContentRegex, cfg.TitleRegex)
 
 	serverHTTP := server.New(imageGetter, cfg.Host)
 

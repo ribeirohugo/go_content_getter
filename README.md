@@ -16,16 +16,24 @@ Configurations are stored in program root directory ``config.toml`` file.
 
 ## 2. Methods
 
-- ``New(cfg config.Config)`` - Requires a ``Config`` struct with a URL and returns a new ``Getter`` struct.
+- ``New(url string, path string, contentRegex string, titleRegex string)`` - ``Getter`` struct constructor that requires:
+* ``url`` string from a web page to look for content.
+* ``path`` string to define where to store fetched content. (Optional field)
+* ``contentRegex`` to select to download. (Optional field)
+* ``titleRegex`` to to select folder title to fetched content. (Optional field)
+
+``Getter`` struct holds the following methods:
 - ``Get()`` - Returns a slice of image or content addresses, the page title and an error or a ``nil`` value.
-- ``Download(folder string, images []string)`` - Receives a folder name and images or content slice addresses and returns and downloads files based on inserted data.
+- ``GetFromURL(url string)`` - Same as Get(), but you can define a specific ``url``.
+- ``Download(folder string, images []string)`` - Receives a folder name and images or content slice addresses and
+returns and downloads files based on inserted data.
 
 ### 2.1. Example
 
 ```
 cfg := config.Config{Url: "https://domain.com"}
 
-getter := New(cfg)
+getter := New(cfg.URL, cfg.Path, cfg.ContentRegex, cfg.TitleRegex)
 
 title, images, err := getter.Get()
 

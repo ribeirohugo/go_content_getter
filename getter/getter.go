@@ -1,6 +1,7 @@
 package getter
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -10,38 +11,51 @@ import (
 )
 
 const (
-	defaultRegex      = "href=[\"'](http[s]?://[a-zA-Z0-9/._-]+[.](?:jpg|gif|png))[\"']"
-	defaultTitleRegex = "(?:\\<title\\>)(.*)(?:<\\/title\\>)"
+	defaultContentRegex = "href=[\"'](http[s]?://[a-zA-Z0-9/._-]+[.](?:jpg|gif|png))[\"']"
+	defaultTitleRegex   = "(?:\\<title\\>)(.*)(?:<\\/title\\>)"
+	defaultFolderName   = "content"
 )
 
-// Getter
+// Getter holds content content Getter struct
 type Getter struct {
-	regex string
-	url   string
-	path  string
+	contentRegex string
+	titleRegex   string
+	path         string
+	url          string
 }
 
-func New(regex string, url string, path string) Getter {
-	regexExpression := defaultRegex
-	if regex != "" {
-		regexExpression = regex
+// New is a a Getter constructor. It requires:
+// A url string from a web page to look for content.
+// A path string to define where to store fetched content. (Optional field)
+// A contentRegex to select to download. (Optional field)
+// A titleRegex to to select folder title to fetched content. (Optional field)
+func New(url string, path string, contentRegex string, titleRegex string) Getter {
+	contentRegexExpression := defaultContentRegex
+	if contentRegex != "" {
+		contentRegexExpression = contentRegex
+	}
+
+	titleRegexExpression := defaultTitleRegex
+	if titleRegex != "" {
+		titleRegexExpression = titleRegex
 	}
 
 	return Getter{
-		regex: regexExpression,
-		url:   url,
-		path:  path,
+		contentRegex: contentRegexExpression,
+		titleRegex:   titleRegexExpression,
+		path:         path,
+		url:          url,
 	}
 }
 
-// Returns slice with all images URL, page title
+// Get returns slice with all images URL, page title
 // If any error occurs it returns empty
 func (g Getter) Get() ([]string, string, error) {
 	return g.GetFromURL(g.url)
 }
 
 // Requires Url to get content from
-// Returns slice with all images URL, page title
+// GetFromURL returns slice with all images URL, page title
 // If any error occurs it returns empty
 func (g Getter) GetFromURL(url string) ([]string, string, error) {
 	response, err := http.Get(url)
@@ -59,15 +73,20 @@ func (g Getter) GetFromURL(url string) ([]string, string, error) {
 	}
 	bodyString := string(bodyBytes)
 
-	imgRegex := g.regex
-	if imgRegex == "" {
-		imgRegex = defaultRegex
+	contentRegexString := g.contentRegex
+	if contentRegexString == "" {
+		contentRegexString = defaultContentRegex
 	}
 
-	imageRegex := regexp.MustCompile(imgRegex)
-	titleRegex := regexp.MustCompile(defaultTitleRegex)
+	titleRegexString := g.titleRegex
+	if titleRegexString == "" {
+		titleRegexString = defaultTitleRegex
+	}
 
-	imageMatch := imageRegex.FindAllStringSubmatch(bodyString, -1)
+	contentRegex := regexp.MustCompile(contentRegexString)
+	titleRegex := regexp.MustCompile(titleRegexString)
+
+	contentMatch := contentRegex.FindAllStringSubmatch(bodyString, -1)
 	titleMatch := titleRegex.FindStringSubmatch(bodyString)
 
 	title := ""
@@ -76,7 +95,7 @@ func (g Getter) GetFromURL(url string) ([]string, string, error) {
 	}
 
 	var images []string
-	for _, image := range imageMatch {
+	for _, image := range contentMatch {
 		images = append(images, image[1])
 	}
 
@@ -86,7 +105,12 @@ func (g Getter) GetFromURL(url string) ([]string, string, error) {
 func (g Getter) Download(folder string, images []string) error {
 	_, err := os.Stat(folder)
 
-	fileDir := g.path + folder + string(os.PathSeparator)
+	folderName := folder
+	if folder == "" {
+		folderName = defaultFolderName
+	}
+
+	fileDir := g.path + folderName + string(os.PathSeparator)
 
 	//Create Directory
 	if os.IsNotExist(err) {
@@ -96,24 +120,29 @@ func (g Getter) Download(folder string, images []string) error {
 		}
 	}
 
-	for _, image := range images {
-		response, err := http.Get(image)
+	for i := range images {
+		response, err := http.Get(images[i])
 		if err != nil {
-			return err
+			return fmt.Errorf("error getting image: %s", err.Error())
 		}
 
 		if response.StatusCode == http.StatusOK {
-			name := getImageName(image)
+			name := getImageName(images[i])
 
-			//Create an empty file
+			// Create an empty file
 			file, err := os.Create(fileDir + name)
 			if err != nil {
-				return err
+				return fmt.Errorf("error creating file: %s", err.Error())
 			}
-			defer file.Close()
 
-			//Write file content
+			// Write file content
 			_, err = io.Copy(file, response.Body)
+			if err != nil {
+				return fmt.Errorf("error copying file: %s", err.Error())
+			}
+
+			// Close stream
+			err = file.Close()
 			if err != nil {
 				return err
 			}

@@ -22,7 +22,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	downloader := getter.New(cfg.Regex, cfg.URL, cfg.Path)
+	downloader := getter.New(cfg.URL, cfg.Path, cfg.ContentRegex, cfg.TitleRegex)
 
 	// Create a signal
 	done := make(chan os.Signal, 1)
