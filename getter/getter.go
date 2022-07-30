@@ -141,6 +141,7 @@ func (g Getter) Download(folder string, images []string) error {
 				return fmt.Errorf("error copying file: %s", err.Error())
 			}
 
+			// Close stream
 			err = file.Close()
 			if err != nil {
 				return err

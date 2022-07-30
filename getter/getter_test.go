@@ -90,13 +90,9 @@ func TestGetter_Get(t *testing.T) {
 }
 
 func TestGetter_Download(t *testing.T) {
-	const (
-		folderName = "example"
-	)
+	const folderName = "example"
 
-	var (
-		getter = Getter{}
-	)
+	var getter = Getter{}
 
 	t.Run("with folder defined", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
@@ -125,5 +121,4 @@ func TestGetter_Download(t *testing.T) {
 		err = os.RemoveAll(defaultFolderName)
 		require.NoError(t, err)
 	})
-
 }
