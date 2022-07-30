@@ -13,6 +13,7 @@ import (
 const (
 	defaultContentRegex = "href=[\"'](http[s]?://[a-zA-Z0-9/._-]+[.](?:jpg|gif|png))[\"']"
 	defaultTitleRegex   = "(?:\\<title\\>)(.*)(?:<\\/title\\>)"
+	defaultFolderName   = "content"
 )
 
 // Getter holds content content Getter struct
@@ -104,7 +105,12 @@ func (g Getter) GetFromURL(url string) ([]string, string, error) {
 func (g Getter) Download(folder string, images []string) error {
 	_, err := os.Stat(folder)
 
-	fileDir := g.path + folder + string(os.PathSeparator)
+	folderName := folder
+	if folder == "" {
+		folderName = defaultFolderName
+	}
+
+	fileDir := g.path + folderName + string(os.PathSeparator)
 
 	//Create Directory
 	if os.IsNotExist(err) {

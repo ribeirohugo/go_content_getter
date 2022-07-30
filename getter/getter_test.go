@@ -90,23 +90,40 @@ func TestGetter_Get(t *testing.T) {
 }
 
 func TestGetter_Download(t *testing.T) {
-	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-		_, err := rw.Write([]byte("pageBody"))
-		require.NoError(t, err)
-	}))
-	defer server.Close()
-
 	const (
 		folderName = "example"
 	)
 
-	getter := Getter{}
+	var (
+		getter = Getter{}
+	)
 
-	err := getter.Download(folderName, []string{server.URL})
-	assert.NoError(t, err)
+	t.Run("with folder defined", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+			_, err := rw.Write([]byte("pageBody"))
+			require.NoError(t, err)
+		}))
+		defer server.Close()
 
-	// fileToRemove := fmt.Sprintf("%s%s127.0.0.1",folderName,string(os.PathSeparator))
+		err := getter.Download(folderName, []string{server.URL})
+		assert.NoError(t, err)
 
-	err = os.RemoveAll(folderName)
-	require.NoError(t, err)
+		err = os.RemoveAll(folderName)
+		require.NoError(t, err)
+	})
+
+	t.Run("with empty folder name", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+			_, err := rw.Write([]byte("pageBody"))
+			require.NoError(t, err)
+		}))
+		defer server.Close()
+
+		err := getter.Download("", []string{server.URL})
+		assert.NoError(t, err)
+
+		err = os.RemoveAll(defaultFolderName)
+		require.NoError(t, err)
+	})
+
 }
