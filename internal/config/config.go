@@ -30,6 +30,7 @@ func Load(filePath string) (Config, error) {
 	if err != nil {
 		return Config{}, err
 	}
+
 	_ = file.Close()
 
 	config := Config{

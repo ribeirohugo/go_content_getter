@@ -72,6 +72,7 @@ func (g Getter) GetFromURL(url string) ([]string, string, error) {
 	if err != nil {
 		return []string{}, "", err
 	}
+
 	bodyString := string(bodyBytes)
 
 	contentRegexString := g.contentRegex
