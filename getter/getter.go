@@ -55,8 +55,8 @@ func (g Getter) Get() ([]string, string, error) {
 	return g.GetFromURL(g.url)
 }
 
-// Requires Url to get content from
 // GetFromURL returns slice with all images URL, page title
+// Requires Url to get content from
 // If any error occurs it returns empty
 func (g Getter) GetFromURL(url string) ([]string, string, error) {
 	response, err := http.Get(url)
