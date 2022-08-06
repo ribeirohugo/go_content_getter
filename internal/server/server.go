@@ -1,3 +1,4 @@
+// Package server has http server business logic
 package server
 
 import (
@@ -31,7 +32,7 @@ func New(getter Getter, host string) *httpServer {
 	return s
 }
 
-// InitiateServer - Initiates a HTTP server routers and configs and runs it
+// InitiateServer - Initiates a HTTP server routers and configs and starts the server after that
 func (h *httpServer) InitiateServer() error {
 	router := gin.Default()
 

@@ -1,3 +1,4 @@
+// Package getter holds content structs and methods of getting content
 package getter
 
 import (

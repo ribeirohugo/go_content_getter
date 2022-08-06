@@ -1,3 +1,4 @@
+// Package config holds configuration data struct and data loading
 package config
 
 import (
