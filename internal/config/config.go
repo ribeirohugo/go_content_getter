@@ -30,7 +30,7 @@ func Load(filePath string) (Config, error) {
 	_ = file.Close()
 
 	config := Config{
-		Host: "localhost:8080",
+		Host: defaultHost,
 	}
 
 	err = toml.Unmarshal(bytes, &config)
