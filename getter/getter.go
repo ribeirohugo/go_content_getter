@@ -119,7 +119,7 @@ func (g Getter) Download(folder string, contentURL []string) error {
 
 	//Create Directory
 	if os.IsNotExist(err) {
-		err := os.MkdirAll(fileDir, 0755)
+		err := os.MkdirAll(fileDir, 0750)
 		if err != nil {
 			return err
 		}
