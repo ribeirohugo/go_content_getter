@@ -77,5 +77,6 @@ func (h *httpServer) InitiateServer() error {
 	})
 
 	err := router.Run(h.host)
+
 	return err
 }

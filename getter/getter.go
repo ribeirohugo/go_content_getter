@@ -153,6 +153,7 @@ func (g Getter) Download(folder string, contentURL []string) error {
 			}
 		}
 	}
+
 	return nil
 }
 
