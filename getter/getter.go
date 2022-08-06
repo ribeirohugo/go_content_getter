@@ -102,7 +102,10 @@ func (g Getter) GetFromURL(url string) ([]string, string, error) {
 	return images, title, nil
 }
 
-func (g Getter) Download(folder string, images []string) error {
+// Download - Requests data url and stores it as content data
+// requires the folder path where content will be stored
+// requires a slice with content URLs to be downloaded
+func (g Getter) Download(folder string, contentURL []string) error {
 	_, err := os.Stat(folder)
 
 	folderName := folder
@@ -120,14 +123,14 @@ func (g Getter) Download(folder string, images []string) error {
 		}
 	}
 
-	for i := range images {
-		response, err := http.Get(images[i])
+	for i := range contentURL {
+		response, err := http.Get(contentURL[i])
 		if err != nil {
 			return fmt.Errorf("error getting image: %s", err.Error())
 		}
 
 		if response.StatusCode == http.StatusOK {
-			name := getImageName(images[i])
+			name := getImageName(contentURL[i])
 
 			// Create an empty file
 			file, err := os.Create(fileDir + name)

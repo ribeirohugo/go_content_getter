@@ -9,6 +9,7 @@ import (
 
 const defaultHost = "localhost:8080"
 
+// Config holds configurations data and methods
 type Config struct {
 	ContentRegex string `toml:"contentRegex"`
 	TitleRegex   string `toml:"titleRegex"`
@@ -17,6 +18,7 @@ type Config struct {
 	URL          string `toml:"url"`
 }
 
+// Load - loads configurations from a given toml file path
 func Load(filePath string) (Config, error) {
 	file, err := os.Open(filePath)
 	if err != nil {

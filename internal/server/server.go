@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Getter - content get methods interface
 type Getter interface {
 	Get() ([]string, string, error)
 	GetFromURL(url string) ([]string, string, error)
@@ -19,6 +20,7 @@ type httpServer struct {
 	mux    *http.ServeMux
 }
 
+// New - HTTP server constructor
 func New(getter Getter, host string) *httpServer {
 	s := &httpServer{
 		getter: getter,
@@ -29,6 +31,7 @@ func New(getter Getter, host string) *httpServer {
 	return s
 }
 
+// InitiateServer - Initiates a HTTP server routers and configs and runs it
 func (h *httpServer) InitiateServer() error {
 	router := gin.Default()
 
