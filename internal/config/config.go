@@ -1,7 +1,7 @@
+// Package config holds configuration data struct and data loading
 package config
 
 import (
-	"io/ioutil"
 	"os"
 
 	"github.com/BurntSushi/toml"
@@ -9,6 +9,7 @@ import (
 
 const defaultHost = "localhost:8080"
 
+// Config holds configurations data and methods
 type Config struct {
 	ContentRegex string `toml:"contentRegex"`
 	TitleRegex   string `toml:"titleRegex"`
@@ -17,20 +18,15 @@ type Config struct {
 	URL          string `toml:"url"`
 }
 
+// Load - loads configurations from a given toml file path
 func Load(filePath string) (Config, error) {
-	file, err := os.Open(filePath)
+	bytes, err := os.ReadFile(filePath) // nolint:gosec // received value needs to be a variable
 	if err != nil {
 		return Config{}, err
 	}
-
-	bytes, err := ioutil.ReadAll(file)
-	if err != nil {
-		return Config{}, err
-	}
-	_ = file.Close()
 
 	config := Config{
-		Host: "localhost:8080",
+		Host: defaultHost,
 	}
 
 	err = toml.Unmarshal(bytes, &config)

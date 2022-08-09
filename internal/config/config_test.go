@@ -1,11 +1,11 @@
 package config
 
 import (
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"io/ioutil"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var configContent = `contentRegex = "[ab]"
@@ -43,7 +43,7 @@ func TestConfig(t *testing.T) {
 }
 
 func createTempFile() (*os.File, error) {
-	tempFile, err := ioutil.TempFile("", "config.toml")
+	tempFile, err := os.CreateTemp("", "config.toml")
 	if err != nil {
 		return nil, err
 	}

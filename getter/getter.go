@@ -1,9 +1,9 @@
+// Package getter holds content structs and methods of getting content
 package getter
 
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"regexp"
@@ -14,6 +14,8 @@ const (
 	defaultContentRegex = "href=[\"'](http[s]?://[a-zA-Z0-9/._-]+[.](?:jpg|gif|png))[\"']"
 	defaultTitleRegex   = "(?:\\<title\\>)(.*)(?:<\\/title\\>)"
 	defaultFolderName   = "content"
+
+	filePermissions = 0750
 )
 
 // Getter holds content content Getter struct
@@ -54,11 +56,11 @@ func (g Getter) Get() ([]string, string, error) {
 	return g.GetFromURL(g.url)
 }
 
-// Requires Url to get content from
 // GetFromURL returns slice with all images URL, page title
+// Requires Url to get content from
 // If any error occurs it returns empty
 func (g Getter) GetFromURL(url string) ([]string, string, error) {
-	response, err := http.Get(url)
+	response, err := http.Get(url) // nolint:gosec // received value needs to be a variable
 	if err != nil {
 		return []string{}, "", nil
 	}
@@ -67,10 +69,11 @@ func (g Getter) GetFromURL(url string) ([]string, string, error) {
 		return []string{}, "", nil
 	}
 
-	bodyBytes, err := ioutil.ReadAll(response.Body)
+	bodyBytes, err := io.ReadAll(response.Body)
 	if err != nil {
 		return []string{}, "", err
 	}
+
 	bodyString := string(bodyBytes)
 
 	contentRegexString := g.contentRegex
@@ -102,7 +105,10 @@ func (g Getter) GetFromURL(url string) ([]string, string, error) {
 	return images, title, nil
 }
 
-func (g Getter) Download(folder string, images []string) error {
+// Download - Requests data url and stores it as content data
+// requires the folder path where content will be stored
+// requires a slice with content URLs to be downloaded
+func (g Getter) Download(folder string, contentURL []string) error {
 	_, err := os.Stat(folder)
 
 	folderName := folder
@@ -114,23 +120,23 @@ func (g Getter) Download(folder string, images []string) error {
 
 	//Create Directory
 	if os.IsNotExist(err) {
-		err := os.MkdirAll(fileDir, 0755)
+		err := os.MkdirAll(fileDir, filePermissions)
 		if err != nil {
 			return err
 		}
 	}
 
-	for i := range images {
-		response, err := http.Get(images[i])
+	for i := range contentURL {
+		response, err := http.Get(contentURL[i])
 		if err != nil {
 			return fmt.Errorf("error getting image: %s", err.Error())
 		}
 
 		if response.StatusCode == http.StatusOK {
-			name := getImageName(images[i])
+			name := getImageName(contentURL[i])
 
 			// Create an empty file
-			file, err := os.Create(fileDir + name)
+			file, err := os.Create(fileDir + name) // nolint:gosec // received value needs to be a variable
 			if err != nil {
 				return fmt.Errorf("error creating file: %s", err.Error())
 			}
@@ -148,6 +154,7 @@ func (g Getter) Download(folder string, images []string) error {
 			}
 		}
 	}
+
 	return nil
 }
 
