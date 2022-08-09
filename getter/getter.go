@@ -4,7 +4,6 @@ package getter
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"regexp"
@@ -70,7 +69,7 @@ func (g Getter) GetFromURL(url string) ([]string, string, error) {
 		return []string{}, "", nil
 	}
 
-	bodyBytes, err := ioutil.ReadAll(response.Body)
+	bodyBytes, err := io.ReadAll(response.Body)
 	if err != nil {
 		return []string{}, "", err
 	}
