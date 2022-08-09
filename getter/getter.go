@@ -60,7 +60,7 @@ func (g Getter) Get() ([]string, string, error) {
 // Requires Url to get content from
 // If any error occurs it returns empty
 func (g Getter) GetFromURL(url string) ([]string, string, error) {
-	response, err := http.Get(url)
+	response, err := http.Get(url) // nolint:gosec // received value needs to be a variable
 	if err != nil {
 		return []string{}, "", nil
 	}
@@ -69,7 +69,7 @@ func (g Getter) GetFromURL(url string) ([]string, string, error) {
 		return []string{}, "", nil
 	}
 
-	bodyBytes, err := io.ReadAll(response.Body)
+	bodyBytes, err := io.ReadAll(response.Body) // nolint:gosec // received value needs to be a variable
 	if err != nil {
 		return []string{}, "", err
 	}
