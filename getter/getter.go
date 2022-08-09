@@ -127,7 +127,7 @@ func (g Getter) Download(folder string, contentURL []string) error {
 	}
 
 	for i := range contentURL {
-		response, err := http.Get(contentURL[i]) // nolint:gosec // received value needs to be a variable
+		response, err := http.Get(contentURL[i])
 		if err != nil {
 			return fmt.Errorf("error getting image: %s", err.Error())
 		}
@@ -136,7 +136,7 @@ func (g Getter) Download(folder string, contentURL []string) error {
 			name := getImageName(contentURL[i])
 
 			// Create an empty file
-			file, err := os.Create(fileDir + name)
+			file, err := os.Create(fileDir + name) // nolint:gosec // received value needs to be a variable
 			if err != nil {
 				return fmt.Errorf("error creating file: %s", err.Error())
 			}
