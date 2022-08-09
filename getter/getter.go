@@ -3,6 +3,7 @@ package getter
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -135,30 +136,22 @@ func (g Getter) Download(folder string, contentURL []string) error {
 		if response.StatusCode == http.StatusOK {
 			name := getImageName(contentURL[i])
 
-			fileName := fileDir + name
-
 			// Create an empty file
-			file, err := os.Create(fileName)
+			file, err := os.Create(fileDir + name)
 			if err != nil {
 				return fmt.Errorf("error creating file: %s", err.Error())
 			}
 
-			var responseBody []byte
-
-			_, err = response.Body.Read(responseBody)
+			// Write file content
+			_, err = io.Copy(file, response.Body)
 			if err != nil {
-				return fmt.Errorf("error reading response body file: %s", err.Error())
-			}
-
-			err = os.WriteFile(fileName, responseBody, filePermissions)
-			if err != nil {
-				return fmt.Errorf("error writing file: %s", err.Error())
+				return fmt.Errorf("error copying file: %s", err.Error())
 			}
 
 			// Close stream
 			err = file.Close()
 			if err != nil {
-				return fmt.Errorf("error closing file: %s", err.Error())
+				return err
 			}
 		}
 	}
