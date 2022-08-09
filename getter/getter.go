@@ -15,6 +15,8 @@ const (
 	defaultContentRegex = "href=[\"'](http[s]?://[a-zA-Z0-9/._-]+[.](?:jpg|gif|png))[\"']"
 	defaultTitleRegex   = "(?:\\<title\\>)(.*)(?:<\\/title\\>)"
 	defaultFolderName   = "content"
+
+	filePermissions = 0750
 )
 
 // Getter holds content content Getter struct
@@ -119,7 +121,7 @@ func (g Getter) Download(folder string, contentURL []string) error {
 
 	//Create Directory
 	if os.IsNotExist(err) {
-		err := os.MkdirAll(fileDir, 0750)
+		err := os.MkdirAll(fileDir, filePermissions)
 		if err != nil {
 			return err
 		}
