@@ -4,6 +4,7 @@ package config
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
 	"github.com/BurntSushi/toml"
 )
@@ -21,7 +22,9 @@ type Config struct {
 
 // Load - loads configurations from a given toml file path
 func Load(filePath string) (Config, error) {
-	file, err := os.Open(filePath)
+	cleanedFiePath := filepath.Clean(filePath)
+
+	file, err := os.Open(cleanedFiePath)
 	if err != nil {
 		return Config{}, err
 	}
