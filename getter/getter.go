@@ -69,7 +69,7 @@ func (g Getter) GetFromURL(url string) ([]string, string, error) {
 		return []string{}, "", nil
 	}
 
-	bodyBytes, err := io.ReadAll(response.Body) // nolint:gosec // received value needs to be a variable
+	bodyBytes, err := io.ReadAll(response.Body)
 	if err != nil {
 		return []string{}, "", err
 	}
@@ -127,7 +127,7 @@ func (g Getter) Download(folder string, contentURL []string) error {
 	}
 
 	for i := range contentURL {
-		response, err := http.Get(contentURL[i])
+		response, err := http.Get(contentURL[i]) // nolint:gosec // received value needs to be a variable
 		if err != nil {
 			return fmt.Errorf("error getting image: %s", err.Error())
 		}
