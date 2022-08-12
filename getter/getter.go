@@ -8,11 +8,13 @@ import (
 	"os"
 	"regexp"
 	"strings"
+
+	"github.com/ribeirohugo/go_content_getter/patterns"
 )
 
 const (
-	defaultContentRegex = "href=[\"'](http[s]?://[a-zA-Z0-9/._-]+[.](?:jpg|gif|png))[\"']"
-	defaultTitleRegex   = "(?:\\<title\\>)(.*)(?:<\\/title\\>)"
+	defaultContentRegex = patterns.ImageContentFromHrefURL
+	defaultTitleRegex   = patterns.HtmlTitle
 	defaultFolderName   = "content"
 
 	filePermissions = 0750
