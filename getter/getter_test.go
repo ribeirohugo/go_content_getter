@@ -6,6 +6,8 @@ import (
 	"os"
 	"testing"
 
+	"github.com/ribeirohugo/go_content_getter/patterns"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -74,13 +76,9 @@ func TestGetter_Get(t *testing.T) {
 	}))
 	defer server.Close()
 
-	const (
-		regexTest = "href=[\"']([a-zA-Z0-9/._-]+[.](?:jpg|gif|png))[\"']"
-	)
-
 	getter := Getter{
 		url:          server.URL,
-		contentRegex: regexTest,
+		contentRegex: patterns.ImageContentFromHrefURLWithoutHTTP,
 	}
 
 	images, title, err := getter.Get()
