@@ -14,7 +14,7 @@ import (
 
 const (
 	defaultContentRegex = patterns.ImageContentFromHrefURL
-	defaultTitleRegex   = patterns.HtmlTitle
+	defaultTitleRegex   = patterns.HTMLTitle
 	defaultFolderName   = "content"
 
 	filePermissions = 0750
