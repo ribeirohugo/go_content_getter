@@ -2,8 +2,8 @@
 package patterns
 
 const (
-	// HtmlTitle - HTML title between title tags
-	HtmlTitle = "(?:\\<title\\>)(.*)(?:<\\/title\\>)"
+	// HTMLTitle - HTML title between title tags
+	HTMLTitle = "(?:\\<title\\>)(.*)(?:<\\/title\\>)"
 
 	// ImageContentFromHrefURL - Href value with HTTP or HTTPS prefix and with jpg, gif or png format
 	ImageContentFromHrefURL = "href=[\"'](http[s]?://[a-zA-Z0-9/._-]+[.](?:jpg|gif|png))[\"']"
