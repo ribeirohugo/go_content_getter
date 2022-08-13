@@ -4,6 +4,8 @@ package config
 import (
 	"os"
 
+	"github.com/ribeirohugo/go_content_getter/patterns"
+
 	"github.com/BurntSushi/toml"
 )
 
@@ -26,7 +28,9 @@ func Load(filePath string) (Config, error) {
 	}
 
 	config := Config{
-		Host: defaultHost,
+		Host:         defaultHost,
+		ContentRegex: patterns.ImageContentFromHrefURL,
+		TitleRegex:   patterns.HTMLTitle,
 	}
 
 	err = toml.Unmarshal(bytes, &config)
