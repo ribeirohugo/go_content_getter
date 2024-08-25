@@ -24,5 +24,6 @@ func ContentBytes(contentURL string) ([]byte, error) {
 
 		return bodyBytes, nil
 	}
+
 	return []byte{}, fmt.Errorf("error response status: %s", response.Status)
 }

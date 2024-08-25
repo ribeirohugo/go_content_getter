@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
 	"net/http/httptest"
 )
 
@@ -12,6 +13,7 @@ func TestContentBytes(t *testing.T) {
 	t.Run("should return no errors", func(t *testing.T) {
 		// Create a test server with a mock handler
 		mockResponse := "This is a test response"
+
 		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte(mockResponse))
