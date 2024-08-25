@@ -36,13 +36,13 @@ linters:
     - gocyclo
     - gofmt
     - goimports
-    - gomnd
     - gosec
     - gosimple
     - govet
     - ineffassign
     - lll
     - misspell
+    - mnd
     - nolintlint
     - revive
     - rowserrcheck
@@ -72,6 +72,6 @@ issues:
       linters:
         - dupl
         - errcheck
-        - gomnd
+        - mnd
         - gosec
         - lll
