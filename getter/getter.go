@@ -9,6 +9,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/ribeirohugo/go_content_getter/download"
 	"github.com/ribeirohugo/go_content_getter/patterns"
 )
 
@@ -28,11 +29,11 @@ type Getter struct {
 	url          string
 }
 
-// New is a a Getter constructor. It requires:
+// New is a Getter constructor. It requires:
 // A url string from a web page to look for content.
 // A path string to define where to store fetched content. (Optional field)
 // A contentRegex to select to download. (Optional field)
-// A titleRegex to to select folder title to fetched content. (Optional field)
+// A titleRegex to select folder title to fetched content. (Optional field)
 func New(url string, path string, contentRegex string, titleRegex string) Getter {
 	contentRegexExpression := defaultContentRegex
 	if contentRegex != "" {
@@ -129,31 +130,28 @@ func (g Getter) Download(folder string, contentURL []string) error {
 	}
 
 	for i := range contentURL {
-		response, err := http.Get(contentURL[i])
+		response, err := download.ContentBytes(contentURL[i])
 		if err != nil {
-			return fmt.Errorf("error getting image: %s", err.Error())
+			return err
 		}
 
-		if response.StatusCode == http.StatusOK {
-			name := getImageName(contentURL[i])
+		name := getImageName(contentURL[i])
 
-			// Create an empty file
-			file, err := os.Create(fileDir + name) //nolint:gosec // received value needs to be a variable
-			if err != nil {
-				return fmt.Errorf("error creating file: %s", err.Error())
-			}
+		// Create an empty file
+		file, err := os.Create(fileDir + name) //nolint:gosec // received value needs to be a variable
+		if err != nil {
+			return fmt.Errorf("error creating file: %s", err.Error())
+		}
 
-			// Write file content
-			_, err = io.Copy(file, response.Body)
-			if err != nil {
-				return fmt.Errorf("error copying file: %s", err.Error())
-			}
+		_, err = file.Write(response)
+		if err != nil {
+			return fmt.Errorf("error writing file: %s", err.Error())
+		}
 
-			// Close stream
-			err = file.Close()
-			if err != nil {
-				return err
-			}
+		// Close stream
+		err = file.Close()
+		if err != nil {
+			return err
 		}
 	}
 
