@@ -22,7 +22,7 @@ type Config struct {
 
 // Load - loads configurations from a given toml file path
 func Load(filePath string) (Config, error) {
-	bytes, err := os.ReadFile(filePath) // nolint:gosec // received value needs to be a variable
+	bytes, err := os.ReadFile(filePath) //nolint:gosec // received value needs to be a variable
 	if err != nil {
 		return Config{}, err
 	}
