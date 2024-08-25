@@ -28,11 +28,11 @@ type Getter struct {
 	url          string
 }
 
-// New is a a Getter constructor. It requires:
+// New is a Getter constructor. It requires:
 // A url string from a web page to look for content.
 // A path string to define where to store fetched content. (Optional field)
 // A contentRegex to select to download. (Optional field)
-// A titleRegex to to select folder title to fetched content. (Optional field)
+// A titleRegex to select folder title to fetched content. (Optional field)
 func New(url string, path string, contentRegex string, titleRegex string) Getter {
 	contentRegexExpression := defaultContentRegex
 	if contentRegex != "" {
