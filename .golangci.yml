@@ -30,20 +30,19 @@ linters-settings:
 linters:
   # Enable extra linters besides the default ones
   enable:
-    - deadcode
     - dupl
     - errcheck
     - goconst
     - gocyclo
     - gofmt
     - goimports
-    - gomnd
     - gosec
     - gosimple
     - govet
     - ineffassign
     - lll
     - misspell
+    - mnd
     - nolintlint
     - revive
     - rowserrcheck
@@ -53,7 +52,6 @@ linters:
     - unconvert
     - unparam
     - unused
-    - varcheck
     - whitespace
     - wsl
 
@@ -74,6 +72,6 @@ issues:
       linters:
         - dupl
         - errcheck
-        - gomnd
+        - mnd
         - gosec
         - lll

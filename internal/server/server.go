@@ -59,6 +59,7 @@ func (h *httpServer) InitiateServer() error {
 			c.HTML(http.StatusOK, "index.html", gin.H{
 				"message": err.Error(),
 			})
+
 			return
 		}
 
@@ -67,6 +68,7 @@ func (h *httpServer) InitiateServer() error {
 			c.HTML(http.StatusOK, "index.html", gin.H{
 				"message": err.Error(),
 			})
+
 			return
 		}
 

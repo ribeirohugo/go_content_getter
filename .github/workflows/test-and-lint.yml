@@ -1,34 +1,65 @@
-on: push
 name: Test and Lint
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+    branches:
+      - "main"
 
 jobs:
-  test-and-lint:
-    strategy:
-      matrix:
-        go-version: [1.16.x]
-        #os: [ubuntu-latest, macos-latest, windows-latest]
-        os: [ubuntu-latest]
-    runs-on: ${{ matrix.os }}
+  lint:
+    name: Run golangci-lint
+    runs-on: ubuntu-latest
+
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version: "1.22"
+          cache: true
 
       - name: Install mockgen
-        run: go install github.com/golang/mock/mockgen@latest
+        run: go install go.uber.org/mock/mockgen@v0.4.0
 
-      - uses: actions/checkout@v2
+      - name: Generate
+        run: go generate ./...
+
+      - name: Lint
+        uses: golangci/golangci-lint-action@v4
+        with:
+          version: v1.60.3
+          skip-pkg-cache: true
+          skip-build-cache: true
+
+      - name: Clean
+        run: go clean -modcache -v
+
+  unit-test:
+    name: Run unit tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+          cache: true
+
+      - name: Install mockgen
+        run: go install go.uber.org/mock/mockgen@v0.4.0
+
       - name: Generate
         run: go generate ./...
 
       - name: Test
         run: go test ./...
 
-      - name: Lint
-        uses: golangci/golangci-lint-action@v2
-        with:
-          version: v1.47.3
-          skip-pkg-cache: true
-          skip-build-cache: true
+      - name: Clean
+        run: go clean -modcache -v

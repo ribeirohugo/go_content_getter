@@ -62,7 +62,7 @@ func (g Getter) Get() ([]string, string, error) {
 // Requires Url to get content from
 // If any error occurs it returns empty
 func (g Getter) GetFromURL(url string) ([]string, string, error) {
-	response, err := http.Get(url) // nolint:gosec // received value needs to be a variable
+	response, err := http.Get(url) //nolint:gosec // received value needs to be a variable
 	if err != nil {
 		return []string{}, "", nil
 	}
@@ -138,7 +138,7 @@ func (g Getter) Download(folder string, contentURL []string) error {
 			name := getImageName(contentURL[i])
 
 			// Create an empty file
-			file, err := os.Create(fileDir + name) // nolint:gosec // received value needs to be a variable
+			file, err := os.Create(fileDir + name) //nolint:gosec // received value needs to be a variable
 			if err != nil {
 				return fmt.Errorf("error creating file: %s", err.Error())
 			}
