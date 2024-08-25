@@ -30,7 +30,6 @@ linters-settings:
 linters:
   # Enable extra linters besides the default ones
   enable:
-    - deadcode
     - dupl
     - errcheck
     - goconst
@@ -53,7 +52,6 @@ linters:
     - unconvert
     - unparam
     - unused
-    - varcheck
     - whitespace
     - wsl
 
