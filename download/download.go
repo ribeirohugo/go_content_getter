@@ -10,7 +10,7 @@ import (
 // ContentBytes - Makes an HTTP request to a URL and
 // gets the content in bytes format, according to a given content regex pattern.
 func ContentBytes(contentURL string) ([]byte, error) {
-	response, err := http.Get(contentURL)
+	response, err := http.Get(contentURL) //nolint:gosec // received value needs to be a variable
 	if err != nil {
 		return []byte{}, fmt.Errorf("error making HTTP request to \"%s\": %s", contentURL, err.Error())
 	}
