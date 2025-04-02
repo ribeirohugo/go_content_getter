@@ -4,9 +4,9 @@ package config
 import (
 	"os"
 
-	"github.com/ribeirohugo/go_content_getter/patterns"
-
 	"github.com/BurntSushi/toml"
+
+	"github.com/ribeirohugo/go_content_getter/patterns"
 )
 
 const defaultHost = "localhost:8080"
@@ -22,7 +22,7 @@ type Config struct {
 
 // Load - loads configurations from a given toml file path
 func Load(filePath string) (Config, error) {
-	bytes, err := os.ReadFile(filePath) //nolint:gosec // received value needs to be a variable
+	bytes, err := os.ReadFile(filePath)
 	if err != nil {
 		return Config{}, err
 	}

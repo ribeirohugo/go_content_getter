@@ -42,6 +42,17 @@ linters:
       # Default: 1
       tab-width: 1
 
+    revive:
+      rules:
+        # https://github.com/mgechev/revive/blob/HEAD/RULES_DESCRIPTIONS.md#var-naming
+        - name: var-naming
+          disabled: false
+          exclude: [""]
+          arguments:
+            - [ "HTTP" ] # AllowList
+            - [ ] # DenyList
+            - - upperCaseConst: true # Extra parameter (upperCaseConst|skipPackageNameChecks)
+
   # Defines a set of rules to ignore issues.
   # It does not skip the analysis, and so does not ignore "typecheck" errors.
   exclusions:
