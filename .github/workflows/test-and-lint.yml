@@ -29,11 +29,11 @@ jobs:
         run: go generate ./...
 
       - name: Lint
-        uses: golangci/golangci-lint-action@v4
+        uses: golangci/golangci-lint-action@v7
         with:
-          version: v1.60.3
-          skip-pkg-cache: true
-          skip-build-cache: true
+          version: v2.0.2
+          skip-cache: true
+          args: --config=.golangci.yml
 
       - name: Clean
         run: go clean -modcache -v
