@@ -15,15 +15,15 @@ type Getter interface {
 	Download(folder string, images []string) error
 }
 
-type httpServer struct {
+type HttpServer struct {
 	getter Getter
 	host   string
 	mux    *http.ServeMux
 }
 
 // New - HTTP server constructor
-func New(getter Getter, host string) *httpServer {
-	s := &httpServer{
+func New(getter Getter, host string) *HttpServer {
+	s := &HttpServer{
 		getter: getter,
 		host:   host,
 		mux:    http.NewServeMux(),
@@ -32,8 +32,8 @@ func New(getter Getter, host string) *httpServer {
 	return s
 }
 
-// InitiateServer - Initiates a HTTP server routers and configs and starts the server after that
-func (h *httpServer) InitiateServer() error {
+// InitiateServer - Initiates an HTTP server routers and configs and starts the server after that
+func (h *HttpServer) InitiateServer() error {
 	router := gin.Default()
 
 	router.Static("/assets", "./assets")
