@@ -18,7 +18,7 @@ const (
 	defaultTitleRegex   = patterns.HTMLTitle
 	defaultFolderName   = "content"
 
-	filePermissions = 0750
+	filePermissions = 0o750
 )
 
 // Getter holds content content Getter struct
@@ -121,7 +121,7 @@ func (g Getter) Download(folder string, contentURL []string) error {
 
 	fileDir := g.path + folderName + string(os.PathSeparator)
 
-	//Create Directory
+	// Create Directory
 	if os.IsNotExist(err) {
 		err := os.MkdirAll(fileDir, filePermissions)
 		if err != nil {
@@ -138,7 +138,7 @@ func (g Getter) Download(folder string, contentURL []string) error {
 		name := getImageName(contentURL[i])
 
 		// Create an empty file
-		file, err := os.Create(fileDir + name) //nolint:gosec // received value needs to be a variable
+		file, err := os.Create(fileDir + name)
 		if err != nil {
 			return fmt.Errorf("error creating file: %s", err.Error())
 		}
