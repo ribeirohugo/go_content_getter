@@ -42,7 +42,7 @@ func GetHTTP(contentURL string) (model.Page, error) {
 
 // titleFromHTTP gets title from HTTP page.
 func titleFromHTTP(html []byte) (string, error) {
-	re := regexp.MustCompile(patterns.HTMLTitle2)
+	re := regexp.MustCompile(patterns.HTMLTitle)
 	matches := re.FindSubmatch(html)
 	if len(matches) >= 2 {
 		return string(matches[1]), nil

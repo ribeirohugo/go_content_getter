@@ -1,11 +1,7 @@
 package source
 
 import (
-	"github.com/ribeirohugo/go_content_getter/pkg/download"
-	"github.com/ribeirohugo/go_content_getter/pkg/model"
-	"github.com/ribeirohugo/go_content_getter/pkg/page"
 	"github.com/ribeirohugo/go_content_getter/pkg/patterns"
-	"github.com/ribeirohugo/go_content_getter/pkg/target"
 )
 
 const (
