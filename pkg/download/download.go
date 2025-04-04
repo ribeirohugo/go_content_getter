@@ -9,23 +9,22 @@ import (
 	"github.com/ribeirohugo/go_content_getter/pkg/model"
 )
 
-// Content - Makes an HTTP request to a URL and gets the content in bytes format.
-func Content(page model.Page) (model.File, error) {
-	response, err := http.Get(page.URL) //nolint:gosec // received value needs to be a variable
+// Target - Makes an HTTP request to a URL and gets the content in bytes format.
+func Target(target model.Target) (model.File, error) {
+	response, err := http.Get(target.URL) //nolint:gosec // received value needs to be a variable
 	if err != nil {
-		return model.File{}, fmt.Errorf("error making HTTP request to \"%s\": %s", contentURL, err.Error())
+		return model.File{}, fmt.Errorf("error making HTTP request to \"%s\": %s", target.URL, err.Error())
 	}
 
 	if response.StatusCode == http.StatusOK {
-		// Read the response body into a byte slice
 		bodyBytes, err := io.ReadAll(response.Body)
 		if err != nil {
 			return model.File{}, fmt.Errorf("error reading response body: %s", err.Error())
 		}
 
 		file := model.File{
-			Title:   contentURL,
-			Content: bodyBytes,
+			Filename: target.Filename,
+			Content:  bodyBytes,
 		}
 
 		return file, nil
@@ -34,27 +33,17 @@ func Content(page model.Page) (model.File, error) {
 	return model.File{}, fmt.Errorf("error response status: %s", response.Status)
 }
 
-// ContentBytes - Makes an HTTP request to a URL and gets the content in bytes format.
-func ContentBytes(contentURL string) (model.File, error) {
-	response, err := http.Get(contentURL) //nolint:gosec // received value needs to be a variable
-	if err != nil {
-		return model.File{}, fmt.Errorf("error making HTTP request to \"%s\": %s", contentURL, err.Error())
-	}
+func ManyTargets(targets []model.Target) ([]model.File, error) {
+	var files []model.File
 
-	if response.StatusCode == http.StatusOK {
-		// Read the response body into a byte slice
-		bodyBytes, err := io.ReadAll(response.Body)
+	for i := range targets {
+		file, err := Target(targets[i])
 		if err != nil {
-			return model.File{}, fmt.Errorf("error reading response body: %s", err.Error())
+			return files, err
 		}
 
-		file := model.File{
-			Title:   contentURL,
-			Content: bodyBytes,
-		}
-
-		return file, nil
+		files = append(files, file)
 	}
 
-	return model.File{}, fmt.Errorf("error response status: %s", response.Status)
+	return files, nil
 }
