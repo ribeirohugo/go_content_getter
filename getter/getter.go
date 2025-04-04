@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/ribeirohugo/go_content_getter/download"
-	"github.com/ribeirohugo/go_content_getter/patterns"
+	"github.com/ribeirohugo/go_content_getter/pkg/patterns"
 )
 
 const (
@@ -143,7 +143,7 @@ func (g Getter) Download(folder string, contentURL []string) error {
 			return fmt.Errorf("error creating file: %s", err.Error())
 		}
 
-		_, err = file.Write(response)
+		_, err = file.Write(response.Content)
 		if err != nil {
 			return fmt.Errorf("error writing file: %s", err.Error())
 		}

@@ -1,10 +1,9 @@
 package config
 
 import (
+	"github.com/ribeirohugo/go_content_getter/pkg/patterns"
 	"os"
 	"testing"
-
-	"github.com/ribeirohugo/go_content_getter/patterns"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

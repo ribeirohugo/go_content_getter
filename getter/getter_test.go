@@ -6,10 +6,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ribeirohugo/go_content_getter/patterns"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/ribeirohugo/go_content_getter/pkg/patterns"
 )
 
 const pageRequest = `<title>Page Title</title>

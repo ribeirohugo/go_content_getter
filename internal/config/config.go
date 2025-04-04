@@ -2,11 +2,10 @@
 package config
 
 import (
+	"github.com/ribeirohugo/go_content_getter/pkg/patterns"
 	"os"
 
 	"github.com/BurntSushi/toml"
-
-	"github.com/ribeirohugo/go_content_getter/patterns"
 )
 
 const defaultHost = "localhost:8080"

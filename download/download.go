@@ -6,28 +6,84 @@ import (
 	"io"
 	"net/http"
 	"regexp"
+
+	"github.com/ribeirohugo/go_content_getter/pkg/model"
 )
 
-// ContentBytes - Makes an HTTP request to a URL and
-// gets the content in bytes format.
-func ContentBytes(contentURL string) ([]byte, error) {
+// Content - Makes an HTTP request to a URL and gets the content in bytes format.
+func Content(file model.File) (model.File, error) {
 	response, err := http.Get(contentURL) //nolint:gosec // received value needs to be a variable
 	if err != nil {
-		return []byte{}, fmt.Errorf("error making HTTP request to \"%s\": %s", contentURL, err.Error())
+		return model.File{}, fmt.Errorf("error making HTTP request to \"%s\": %s", contentURL, err.Error())
 	}
 
 	if response.StatusCode == http.StatusOK {
 		// Read the response body into a byte slice
 		bodyBytes, err := io.ReadAll(response.Body)
 		if err != nil {
-			return []byte{}, fmt.Errorf("error reading response body: %s", err.Error())
+			return model.File{}, fmt.Errorf("error reading response body: %s", err.Error())
 		}
 
-		return bodyBytes, nil
+		file := model.File{
+			Title:   contentURL,
+			Content: bodyBytes,
+		}
+
+		return file, nil
 	}
 
-	return []byte{}, fmt.Errorf("error response status: %s", response.Status)
+	return model.File{}, fmt.Errorf("error response status: %s", response.Status)
 }
+
+// ContentBytes - Makes an HTTP request to a URL and gets the content in bytes format.
+func ContentBytes(contentURL string) (model.File, error) {
+	response, err := http.Get(contentURL) //nolint:gosec // received value needs to be a variable
+	if err != nil {
+		return model.File{}, fmt.Errorf("error making HTTP request to \"%s\": %s", contentURL, err.Error())
+	}
+
+	if response.StatusCode == http.StatusOK {
+		// Read the response body into a byte slice
+		bodyBytes, err := io.ReadAll(response.Body)
+		if err != nil {
+			return model.File{}, fmt.Errorf("error reading response body: %s", err.Error())
+		}
+
+		file := model.File{
+			Title:   contentURL,
+			Content: bodyBytes,
+		}
+
+		return file, nil
+	}
+
+	return model.File{}, fmt.Errorf("error response status: %s", response.Status)
+}
+
+// ContentBytes - Makes an HTTP request to a URL and gets the content in bytes format.
+//func ContentBytes(contentURL string) (model.File, error) {
+//	response, err := http.Get(contentURL) //nolint:gosec // received value needs to be a variable
+//	if err != nil {
+//		return model.File{}, fmt.Errorf("error making HTTP request to \"%s\": %s", contentURL, err.Error())
+//	}
+//
+//	if response.StatusCode == http.StatusOK {
+//		// Read the response body into a byte slice
+//		bodyBytes, err := io.ReadAll(response.Body)
+//		if err != nil {
+//			return model.File{}, fmt.Errorf("error reading response body: %s", err.Error())
+//		}
+//
+//		file := model.File{
+//			Title:   contentURL,
+//			Content: bodyBytes,
+//		}
+//
+//		return file, nil
+//	}
+//
+//	return model.File{}, fmt.Errorf("error response status: %s", response.Status)
+//}
 
 // MultipleContentBytes - Makes an HTTP request to a URL and downloads the page title and the URLs inside that page,
 // to be downloaded.
