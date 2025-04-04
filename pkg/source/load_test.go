@@ -4,9 +4,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ribeirohugo/go_content_getter/pkg/patterns"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/ribeirohugo/go_content_getter/pkg/patterns"
 )
 
 var configContent = `contentRegex = "[ab]"
