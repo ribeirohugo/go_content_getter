@@ -11,15 +11,6 @@ import (
 
 const defaultHost = "localhost:8080"
 
-// Source holds configurations data and methods
-type Source struct {
-	ContentRegex string `toml:"contentRegex"`
-	TitleRegex   string `toml:"titleRegex"`
-	Host         string `toml:"host"`
-	Path         string `toml:"path"`
-	URL          string `toml:"url"`
-}
-
 // Load - loads configurations from a given toml file path
 func Load(filePath string) (Source, error) {
 	bytes, err := os.ReadFile(filePath)
