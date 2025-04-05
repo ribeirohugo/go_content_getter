@@ -1,10 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
-	"github.com/ribeirohugo/go_content_getter/getter"
-	"github.com/ribeirohugo/go_content_getter/internal/config"
+	"github.com/ribeirohugo/go_content_getter/pkg/config"
+	"github.com/ribeirohugo/go_content_getter/pkg/source"
 )
 
 const (
@@ -17,15 +18,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	downloader := getter.New(cfg.URL, cfg.Path, cfg.ContentRegex, cfg.TitleRegex)
+	src := source.New(cfg.URL, cfg.Path, cfg.ContentRegex, cfg.TitleRegex)
 
-	images, title, err := downloader.Get()
+	files, err := src.Get()
 	if err != nil {
 		log.Println(err)
 	}
 
-	err = downloader.Download(title, images)
-	if err != nil {
-		log.Println(err)
-	}
+	fmt.Println(files)
 }

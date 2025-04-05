@@ -6,25 +6,26 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
+	"github.com/ribeirohugo/go_content_getter/pkg/model"
 )
 
-// Getter - content get methods interface
-type Getter interface {
-	Get() ([]string, string, error)
-	GetFromURL(url string) ([]string, string, error)
-	Download(folder string, images []string) error
+// Source - content get methods interface
+type Source interface {
+	Get() ([]model.File, error)
+	GetFromURL(url string) ([]model.File, error)
 }
 
 type HttpServer struct {
-	getter Getter
+	source Source
 	host   string
 	mux    *http.ServeMux
 }
 
 // New - HTTP server constructor
-func New(getter Getter, host string) *HttpServer {
+func New(source Source, host string) *HttpServer {
 	s := &HttpServer{
-		getter: getter,
+		source: source,
 		host:   host,
 		mux:    http.NewServeMux(),
 	}
@@ -54,7 +55,7 @@ func (h *HttpServer) InitiateServer() error {
 
 		url := c.Request.PostForm["url_parse"][0]
 
-		images, title, err := h.getter.GetFromURL(url)
+		files, err := h.source.GetFromURL(url)
 		if err != nil {
 			c.HTML(http.StatusOK, "index.html", gin.H{
 				"message": err.Error(),
