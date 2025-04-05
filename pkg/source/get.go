@@ -10,7 +10,13 @@ import (
 // Get returns slice with all images URL, page title
 // If any error occurs it returns empty
 func (s Source) Get() ([]model.File, error) {
-	srcPage, err := page.GetHTTP(s.URL)
+	return s.GetFromURL(s.URL)
+}
+
+// GetFromURL returns slice with all images URL, page title
+// If any error occurs it returns empty
+func (s Source) GetFromURL(url string) ([]model.File, error) {
+	srcPage, err := page.GetHTTP(url)
 	if err != nil {
 		return []model.File{}, err
 	}
