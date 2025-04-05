@@ -1,7 +1,6 @@
 package source
 
 import (
-	"fmt"
 	"github.com/ribeirohugo/go_content_getter/pkg/download"
 	"github.com/ribeirohugo/go_content_getter/pkg/model"
 	"github.com/ribeirohugo/go_content_getter/pkg/page"
@@ -16,14 +15,10 @@ func (s Source) Get() ([]model.File, error) {
 		return []model.File{}, err
 	}
 
-	fmt.Println(srcPage)
-
 	targets, err := target.GetAll(srcPage, s.ContentRegex)
 	if err != nil {
 		return []model.File{}, err
 	}
-
-	fmt.Println(targets)
 
 	files, err := download.ManyTargets(targets)
 	if err != nil {
