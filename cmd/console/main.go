@@ -38,7 +38,7 @@ func main() {
 	fmt.Println("Console closed.")
 }
 
-func getContent(src source.Source) {
+func getContent(src source.Getter) {
 	var url string
 
 	fmt.Println(insertMessage)
