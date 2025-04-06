@@ -20,7 +20,7 @@ func Load(filePath string) (Config, error) {
 
 	config := Config{
 		Host:         defaultHost,
-		ContentRegex: patterns.ImageContentFromHrefURL,
+		ContentRegex: patterns.ImageSrc,
 		TitleRegex:   patterns.HTMLTitle,
 	}
 

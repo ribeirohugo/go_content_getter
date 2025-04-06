@@ -56,7 +56,7 @@ func TestConfig(t *testing.T) {
 
 		t.Run("without optional fields", func(t *testing.T) {
 			var configTest = Config{
-				ContentRegex: patterns.ImageContentFromHrefURL,
+				ContentRegex: patterns.ImageSrc,
 				TitleRegex:   patterns.HTMLTitle,
 				Host:         defaultHost,
 				Path:         pathTest,
