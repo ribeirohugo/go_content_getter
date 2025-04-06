@@ -5,6 +5,9 @@ const (
 	// HTMLTitle - HTML title between title tags
 	HTMLTitle = "(?:\\<title\\>)(.*)(?:<\\/title\\>)"
 
+	// ImageSrc - is HTML image full URL source value
+	ImageSrc = "src=[\"'](http[s]?://[a-zA-Z0-9/._-]+(?::[0-9]+)?/[a-zA-Z0-9/._-]*[.](?:jpg|gif|png))(?:[?&#].*)?[\"']"
+
 	// ImageContentFromHrefURL - Href value with HTTP or HTTPS prefix and with jpg, gif or png format
 	ImageContentFromHrefURL = "href=[\"'](http[s]?://[a-zA-Z0-9/._-]+[.](?:jpg|gif|png))[\"']"
 

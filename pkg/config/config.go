@@ -6,19 +6,10 @@ import (
 
 	"github.com/BurntSushi/toml"
 
-	"github.com/ribeirohugo/go_content_getter/patterns"
+	"github.com/ribeirohugo/go_content_getter/pkg/patterns"
 )
 
 const defaultHost = "localhost:8080"
-
-// Config holds configurations data and methods
-type Config struct {
-	ContentRegex string `toml:"contentRegex"`
-	TitleRegex   string `toml:"titleRegex"`
-	Host         string `toml:"host"`
-	Path         string `toml:"path"`
-	URL          string `toml:"url"`
-}
 
 // Load - loads configurations from a given toml file path
 func Load(filePath string) (Config, error) {
@@ -29,7 +20,7 @@ func Load(filePath string) (Config, error) {
 
 	config := Config{
 		Host:         defaultHost,
-		ContentRegex: patterns.ImageContentFromHrefURL,
+		ContentRegex: patterns.ImageSrc,
 		TitleRegex:   patterns.HTMLTitle,
 	}
 

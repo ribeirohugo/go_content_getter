@@ -7,8 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/ribeirohugo/go_content_getter/getter"
-	"github.com/ribeirohugo/go_content_getter/internal/config"
+	"github.com/ribeirohugo/go_content_getter/pkg/config"
+	"github.com/ribeirohugo/go_content_getter/pkg/source"
 )
 
 const (
@@ -22,7 +22,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	downloader := getter.New(cfg.URL, cfg.Path, cfg.ContentRegex, cfg.TitleRegex)
+	sourceGetter := source.New(cfg.Path, cfg.ContentRegex, cfg.TitleRegex)
 
 	// Create a signal
 	done := make(chan os.Signal, 1)
@@ -30,7 +30,7 @@ func main() {
 
 	go func() {
 		for {
-			getContent(downloader)
+			getContent(sourceGetter)
 		}
 	}()
 
@@ -38,7 +38,7 @@ func main() {
 	fmt.Println("Console closed.")
 }
 
-func getContent(downloader getter.Getter) {
+func getContent(src source.Getter) {
 	var url string
 
 	fmt.Println(insertMessage)
@@ -48,13 +48,10 @@ func getContent(downloader getter.Getter) {
 		log.Println(err)
 	}
 
-	images, title, err := downloader.GetFromURL(url)
+	content, err := src.GetAndStore(url)
 	if err != nil {
 		log.Println(err)
 	}
 
-	err = downloader.Download(title, images)
-	if err != nil {
-		log.Println(err)
-	}
+	fmt.Println(content)
 }
