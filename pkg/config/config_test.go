@@ -12,11 +12,11 @@ import (
 
 var configContent = `contentRegex = "[ab]"
 titleRegex = "title"
-url = "sub.domain"
+url = ["sub.domain"]
 path = "/path/to"
 `
 
-var configContentWithoutOptionalFields = `url = "sub.domain"
+var configContentWithoutOptionalFields = `url = ["sub.domain"]
 path = "/path/to"
 `
 

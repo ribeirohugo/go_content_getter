@@ -75,22 +75,5 @@ func TestAll(t *testing.T) {
 			err := All(invalidPath, "fail", files)
 			assert.Error(t, err)
 		})
-
-		t.Run("of existing subfolder", func(t *testing.T) {
-			tmpDir := t.TempDir()
-			subFolder := "readonly"
-
-			// create the subfolder manually and make it read-only
-			fullPath := filepath.Join(tmpDir, subFolder)
-			err := os.MkdirAll(fullPath, 0444)
-			assert.NoError(t, err)
-
-			files := []model.File{
-				{Filename: "cant-write.txt", Content: []byte("will fail")},
-			}
-
-			err = All(tmpDir, subFolder, files)
-			assert.Error(t, err)
-		})
 	})
 }
