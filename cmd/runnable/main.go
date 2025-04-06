@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/ribeirohugo/go_content_getter/pkg/config"
@@ -18,12 +17,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	src := source.New(cfg.URL, cfg.Path, cfg.ContentRegex, cfg.TitleRegex)
+	src := source.New(cfg.Path, cfg.ContentRegex, cfg.TitleRegex)
 
-	files, err := src.Get()
-	if err != nil {
-		log.Println(err)
+	for i := range cfg.URL {
+		_, err := src.GetAndStore(cfg.URL[i])
+		if err != nil {
+			log.Println(err)
+		}
 	}
-
-	fmt.Println(files)
 }

@@ -39,7 +39,7 @@ func TestConfig(t *testing.T) {
 				TitleRegex:   titleRegexTest,
 				Host:         defaultHost,
 				Path:         pathTest,
-				URL:          urlTest,
+				URL:          []string{urlTest},
 			}
 
 			tempFile, err := createTempFile(configContent)
@@ -60,7 +60,7 @@ func TestConfig(t *testing.T) {
 				TitleRegex:   patterns.HTMLTitle,
 				Host:         defaultHost,
 				Path:         pathTest,
-				URL:          urlTest,
+				URL:          []string{urlTest},
 			}
 
 			tempFile, err := createTempFile(configContentWithoutOptionalFields)

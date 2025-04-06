@@ -16,7 +16,6 @@ func GetAll(page model.Page, pattern string) ([]model.Target, error) {
 
 	contentRegex := regexp.MustCompile(pattern)
 	matches := contentRegex.FindAllStringSubmatch(string(page.Content), -1)
-	// matches := contentRegex.FindAllSubmatch(page.Content, -1)
 
 	for _, match := range matches {
 		targets = append(targets, model.Target{

@@ -12,8 +12,8 @@ import (
 
 // Source - content get methods interface
 type Source interface {
-	Get() ([]model.File, error)
-	GetFromURL(url string) ([]model.File, error)
+	Get(string) ([]model.File, error)
+	GetAndStore(string) ([]model.File, error)
 }
 
 type HttpServer struct {
@@ -55,7 +55,7 @@ func (h *HttpServer) InitiateServer() error {
 
 		url := c.Request.PostForm["url_parse"][0]
 
-		files, err := h.source.GetFromURL(url)
+		_, err = h.source.Get(url)
 		if err != nil {
 			c.HTML(http.StatusOK, "index.html", gin.H{
 				"message": err.Error(),
@@ -64,7 +64,7 @@ func (h *HttpServer) InitiateServer() error {
 			return
 		}
 
-		err = h.getter.Download(title, images)
+		_, err = h.source.Get(url)
 		if err != nil {
 			c.HTML(http.StatusOK, "index.html", gin.H{
 				"message": err.Error(),

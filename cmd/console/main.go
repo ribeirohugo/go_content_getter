@@ -22,7 +22,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	sourceGetter := source.New(cfg.URL, cfg.Path, cfg.ContentRegex, cfg.TitleRegex)
+	sourceGetter := source.New(cfg.Path, cfg.ContentRegex, cfg.TitleRegex)
 
 	// Create a signal
 	done := make(chan os.Signal, 1)
@@ -48,7 +48,7 @@ func getContent(src source.Source) {
 		log.Println(err)
 	}
 
-	content, err := src.GetFromURL(url)
+	content, err := src.GetAndStore(url)
 	if err != nil {
 		log.Println(err)
 	}
