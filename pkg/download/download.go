@@ -11,7 +11,7 @@ import (
 
 // Target - Makes an HTTP request to a URL and gets the content in bytes format.
 func Target(target model.Target) (model.File, error) {
-	response, err := http.Get(target.URL) //nolint:gosec // received value needs to be a variable
+	response, err := http.Get(target.URL)
 	if err != nil {
 		return model.File{}, fmt.Errorf("error making HTTP request to \"%s\": %s", target.URL, err.Error())
 	}

@@ -10,9 +10,7 @@ import (
 )
 
 func GetAll(page model.Page, pattern string) ([]model.Target, error) {
-	var (
-		targets []model.Target
-	)
+	var targets []model.Target
 
 	contentRegex := regexp.MustCompile(pattern)
 	matches := contentRegex.FindAllStringSubmatch(string(page.Content), -1)
