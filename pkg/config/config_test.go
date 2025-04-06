@@ -10,8 +10,8 @@ import (
 	"github.com/ribeirohugo/go_content_getter/pkg/patterns"
 )
 
-var configContent = `contentRegex = "[ab]"
-titleRegex = "title"
+var configContent = `content_regex = "[ab]"
+title_regex = "title"
 url = ["sub.domain"]
 path = "/path/to"
 `

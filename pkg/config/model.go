@@ -5,14 +5,14 @@ import (
 )
 
 const (
-	defaultContentRegex = patterns.ImageContentFromHrefURL
+	defaultContentRegex = patterns.ImageSrc
 	defaultTitleRegex   = patterns.HTMLTitle
 )
 
 // Config holds configurations data and methods
 type Config struct {
-	ContentRegex string   `toml:"contentRegex"`
-	TitleRegex   string   `toml:"titleRegex"`
+	ContentRegex string   `toml:"content_regex"`
+	TitleRegex   string   `toml:"title_regex"`
 	Host         string   `toml:"host"`
 	Path         string   `toml:"path"`
 	URL          []string `toml:"url"`
