@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -60,11 +62,15 @@ func TestSource_GetAndStore(t *testing.T) {
 		filename    = "text.png"
 		filePath    = "/text.png"
 		fileContent = "content"
+
+		subFolder = "test_folder"
 	)
 	var (
 		server *httptest.Server
 
-		html = `<html><head><title>Hello World</title></head><body><img src="%s%s"></body></html>`
+		tmpDir = t.TempDir()
+
+		html = `<html><head><title>test_folder</title></head><body><img src="%s%s"></body></html>`
 	)
 
 	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -89,11 +95,18 @@ func TestSource_GetAndStore(t *testing.T) {
 	src := Getter{
 		ContentRegex: patterns.ImageSrc,
 		TitleRegex:   defaultTitleRegex,
+		Path:         tmpDir,
 	}
-	files, err := src.Get(server.URL)
+	files, err := src.GetAndStore(server.URL)
 
 	require.NoError(t, err)
 	require.Len(t, files, 1)
 	assert.Equal(t, filename, files[0].Filename)
 	assert.Equal(t, fileContent, string(files[0].Content))
+
+	expectedPath := filepath.Join(tmpDir, subFolder, filename)
+
+	data, err := os.ReadFile(expectedPath)
+	require.NoError(t, err)
+	assert.Equal(t, fileContent, string(data))
 }
