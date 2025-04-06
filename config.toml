@@ -1,4 +1,5 @@
 url = []
-regex = ""
+content_regex = ""
+title_regex = ""
 path = ""
 host = ""

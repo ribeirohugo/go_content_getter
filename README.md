@@ -7,38 +7,40 @@ By defining a Regex pattern it is possible to adjust fetched image addresses or 
 
 Configurations are stored in program root directory ``config.toml`` file.
 
-| Parameter | Description                                                                      | Type     | Default          | Required |
-|:----------|:---------------------------------------------------------------------------------|:---------|:-----------------|:---------|
-| `host`    | Host and port used for server mode application.                                  | `string` | `localhost:8080` | **NO**   |
-| `path`    | Destiny path where files will be stored.                                         | `string` | ` `              | **NO**   |
-| `regex`   | Fill this to replace regex expression to get content address from defined `url`. | `string` | -                | **NO**   |
-| `url`     | Url address to get all images or content.                                        | `string` | ` `              | **YES**  |
+| Parameter       | Description                                                       | Type       | Default                | Required |
+|:----------------|:------------------------------------------------------------------|:-----------|:-----------------------|:---------|
+| `host`          | Host and port used for server mode application.                   | `string`   | `localhost:8080`       | **NO**   |
+| `path`          | Destiny path where files will be stored.                          | `string`   | ` `                    | **NO**   |
+| `content_regex` | Regular expression to find content over defined `url` address.    | `string`   | ImageSrc <sup>1</sup>  | **NO**   |
+| `title_regex`   | Regular expression to find page title over defined `url` address. | `string`   | HTMLTitle <sup>2</sup> | **NO**   |
+| `url`           | Url address to get all images or content.                         | `[]string` | ` `                    | **YES**  |
 
-## 2. Methods
+<sup>1</sup> - ImageSrc is the following regex source: 
+``
+src=[\"'](http[s]?://[a-zA-Z0-9/._-]+(?::[0-9]+)?/[a-zA-Z0-9/._-]*[.](?:jpg|gif|png))(?:[?&#].*)?[\"']
+``
 
-- ``New(url string, path string, contentRegex string, titleRegex string)`` - ``Getter`` struct constructor that requires:
-* ``url`` string from a web page to look for content.
-* ``path`` string to define where to store fetched content. (Optional field)
-* ``contentRegex`` to select to download. (Optional field)
-* ``titleRegex`` to to select folder title to fetched content. (Optional field)
+<sup>1</sup> - HTMLTitle is the following regex source:
+``
+(?:\<title\>)(.*)(?:<\/title\>)
+``
 
-``Getter`` struct holds the following methods:
-- ``Get()`` - Returns a slice of image or content addresses, the page title and an error or a ``nil`` value.
-- ``GetFromURL(url string)`` - Same as Get(), but you can define a specific ``url``.
-- ``Download(folder string, images []string)`` - Receives a folder name and images or content slice addresses and
-returns and downloads files based on inserted data.
+## 2. Domain
 
-### 2.1. Example
+1. `Config` - (optional entity) holds configuration to start a `Getter` source
 
-```
-cfg := config.Config{Url: "https://domain.com"}
+2. `Page` - Base entity that holds a Page to find for data. Has page `Title` and `Content` attributes.
 
-getter := New(cfg.URL, cfg.Path, cfg.ContentRegex, cfg.TitleRegex)
+3. `Target` - Are URLs found in a `Page` to be downloaded after.
 
-title, images, err := getter.Get()
+4. `download` package allows to download one or many targets.
 
-getter.Download(title, images)
-```
+5. `File` - Is the result from a downloaded `Target` and hold filename and content in bytes.
+
+6. `store` package allows to store in a file, the content from a `File`.
+
+7. `source` package holds a `Getter` with `Get` and `GetAndStore` methods, that compiles all the sequence
+from previous entities.
 
 ## 3. Main methods
 
@@ -52,3 +54,19 @@ terminated by user.
 
 * ``server`` - Creates a Web Server based on config.toml attributes and allows users to insert content URLs through an
 HTML web page form.
+
+## 4. Implementation
+
+```
+cfg, err := config.Load("config.toml")
+if err != nil {
+    log.Fatal(err)
+}
+
+sourceGetter := source.New(cfg.Path, cfg.ContentRegex, cfg.TitleRegex)
+
+content, err := sourceGetter.GetAndStore(url)
+if err != nil {
+    log.Println(err)
+}
+```
