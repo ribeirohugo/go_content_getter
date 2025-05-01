@@ -110,3 +110,104 @@ func TestSource_GetAndStore(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, fileContent, string(data))
 }
+
+func TestSource_GetMany(t *testing.T) {
+	const (
+		filename    = "text.png"
+		filePath    = "/text.png"
+		fileContent = "content"
+	)
+	var (
+		server *httptest.Server
+
+		html = `<html><head><title>Hello World</title></head><body><img src="%s%s"></body></html>`
+	)
+
+	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		switch r.URL.Path {
+		case "/":
+			html = fmt.Sprintf(html, server.URL, filePath)
+
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(html))
+
+		case filePath:
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(fileContent))
+
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	src := Getter{
+		ContentRegex: patterns.ImageSrc,
+		TitleRegex:   defaultTitleRegex,
+	}
+
+	urls := []string{server.URL}
+	files, err := src.GetMany(urls)
+
+	require.NoError(t, err)
+	require.Len(t, files, 1)
+	assert.Equal(t, filename, files[urls[0]][0].Filename)
+	assert.Equal(t, fileContent, string(files[urls[0]][0].Content))
+}
+
+func TestSource_GetAndStoreMany(t *testing.T) {
+	const (
+		filename    = "text.png"
+		filePath    = "/text.png"
+		fileContent = "content"
+
+		subFolder = "test_folder"
+	)
+	var (
+		server *httptest.Server
+
+		tmpDir = t.TempDir()
+
+		html = `<html><head><title>test_folder</title></head><body><img src="%s%s"></body></html>`
+	)
+
+	server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		switch r.URL.Path {
+		case "/":
+			html = fmt.Sprintf(html, server.URL, filePath)
+
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(html))
+
+		case filePath:
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(fileContent))
+
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	defer server.Close()
+
+	src := Getter{
+		ContentRegex: patterns.ImageSrc,
+		TitleRegex:   defaultTitleRegex,
+		Path:         tmpDir,
+	}
+
+	urls := []string{server.URL}
+	files, err := src.GetAndStoreMany(urls)
+
+	require.NoError(t, err)
+	require.Len(t, files, 1)
+	assert.Equal(t, filename, files[urls[0]][0].Filename)
+	assert.Equal(t, fileContent, string(files[urls[0]][0].Content))
+
+	expectedPath := filepath.Join(tmpDir, subFolder, filename)
+
+	data, err := os.ReadFile(expectedPath)
+	require.NoError(t, err)
+	assert.Equal(t, fileContent, string(data))
+}
