@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ribeirohugo/go_content_getter/pkg/config"
 
+	"github.com/ribeirohugo/go_content_getter/pkg/config"
 	"github.com/ribeirohugo/go_content_getter/pkg/model"
 )
 
@@ -50,10 +50,11 @@ func (h *HttpServer) InitiateServer() error {
 	{
 		// POST /api/download - download many
 		api.POST("/download", h.DownloadManyHandler)
+		// Health endpoint
+		api.GET("/health", h.HealthHandler)
+		// Default patterns endpoint
+		api.GET("/default-patterns", h.DefaultPatternsHandler)
 	}
-
-	// Health endpoint
-	api.GET("/health", h.HealthHandler)
 
 	err := router.Run(h.host)
 
