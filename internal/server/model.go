@@ -9,6 +9,7 @@ type ErrorResponse struct {
 
 // ContentResponse represents the response for content endpoints
 type ContentResponse struct {
+	Title string       `json:"title"`
 	Files []model.File `json:"files"`
 }
 

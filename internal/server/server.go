@@ -56,8 +56,9 @@ func (h *HttpServer) InitiateServer() error {
 	// API group
 	api := router.Group("/api")
 	{
-		// POST /api/download - download many
+		// Download and Store
 		api.POST("/download", h.DownloadManyHandler)
+		api.POST("/download-and-store", h.DownloadAndStoreManyHandler)
 
 		// Health endpoint
 		api.GET("/health", h.HealthHandler)
