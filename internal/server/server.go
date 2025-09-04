@@ -2,11 +2,12 @@
 package server
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/ribeirohugo/go_middlewares/pkg/cors"
 
+	"github.com/ribeirohugo/go_content_getter/pkg/config"
 	"github.com/ribeirohugo/go_content_getter/pkg/model"
 )
 
@@ -17,17 +18,25 @@ type Source interface {
 }
 
 type HttpServer struct {
-	source Source
-	host   string
-	mux    *http.ServeMux
+	host                string
+	path                string
+	defaultRegexPattern string
+	defaultTitlePattern string
+
+	allowedOrigins []string
+
+	mux *http.ServeMux
 }
 
 // New - HTTP server constructor
-func New(source Source, host string) *HttpServer {
+func New(cfg config.Config) *HttpServer {
 	s := &HttpServer{
-		source: source,
-		host:   host,
-		mux:    http.NewServeMux(),
+		host:                cfg.Host,
+		path:                cfg.Path,
+		defaultRegexPattern: cfg.ContentRegex,
+		defaultTitlePattern: cfg.TitleRegex,
+		allowedOrigins:      cfg.AllowedOrigins,
+		mux:                 http.NewServeMux(),
 	}
 
 	return s
@@ -37,49 +46,40 @@ func New(source Source, host string) *HttpServer {
 func (h *HttpServer) InitiateServer() error {
 	router := gin.Default()
 
-	router.Static("/assets", "./assets")
+	// Middleware
+	router.Use(corsMiddleware(h.allowedOrigins)) // Enables CORS using the custom middleware
 
-	router.LoadHTMLFiles("templates/index.html")
+	// Static
+	// router.Static("/assets", "./assets")
+	// router.LoadHTMLFiles("templates/index.html")
 
-	router.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", gin.H{
-			"title": "Home",
-		})
-	})
+	// API group
+	api := router.Group("/api")
+	{
+		// Download and Store
+		api.POST("/download", h.DownloadManyHandler)
+		api.POST("/download-and-store", h.DownloadAndStoreManyHandler)
 
-	router.POST("/", func(c *gin.Context) {
-		err := c.Request.ParseForm()
-		if err != nil {
-			log.Println(err)
-		}
+		// Health endpoint
+		api.GET("/health", h.HealthHandler)
 
-		url := c.Request.PostForm["url_parse"][0]
-
-		_, err = h.source.Get(url)
-		if err != nil {
-			c.HTML(http.StatusOK, "index.html", gin.H{
-				"message": err.Error(),
-			})
-
-			return
-		}
-
-		_, err = h.source.Get(url)
-		if err != nil {
-			c.HTML(http.StatusOK, "index.html", gin.H{
-				"message": err.Error(),
-			})
-
-			return
-		}
-
-		c.HTML(http.StatusOK, "index.html", gin.H{
-			"title":   "Home",
-			"message": "Success!",
-		})
-	})
+		// Default patterns endpoint
+		api.GET("/default-patterns", h.DefaultPatternsHandler)
+	}
 
 	err := router.Run(h.host)
 
 	return err
+}
+
+func corsMiddleware(allowedOrigins []string) gin.HandlerFunc {
+	corsMiddleware := cors.New(allowedOrigins)
+
+	return func(c *gin.Context) {
+		final := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			c.Request = r
+			c.Next()
+		})
+		corsMiddleware.Middleware(final).ServeHTTP(c.Writer, c.Request)
+	}
 }

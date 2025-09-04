@@ -3,3 +3,4 @@ content_regex = ""
 title_regex = ""
 path = ""
 host = ""
+allowed_origins = []

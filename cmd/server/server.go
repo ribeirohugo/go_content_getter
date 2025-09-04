@@ -5,7 +5,6 @@ import (
 
 	"github.com/ribeirohugo/go_content_getter/internal/server"
 	"github.com/ribeirohugo/go_content_getter/pkg/config"
-	"github.com/ribeirohugo/go_content_getter/pkg/source"
 )
 
 const configFile = "config.toml"
@@ -16,9 +15,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	src := source.New(cfg.Path, cfg.ContentRegex, cfg.TitleRegex)
-
-	serverHTTP := server.New(src, src.Host)
+	serverHTTP := server.New(cfg)
 
 	err = serverHTTP.InitiateServer()
 	if err != nil {
