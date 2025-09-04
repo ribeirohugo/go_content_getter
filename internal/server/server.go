@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/ribeirohugo/go_content_getter/pkg/config"
 
 	"github.com/ribeirohugo/go_content_getter/pkg/model"
 )
@@ -16,16 +17,21 @@ type Source interface {
 }
 
 type HttpServer struct {
-	path string
-	host string
-	mux  *http.ServeMux
+	host                string
+	path                string
+	defaultRegexPattern string
+	defaultTitlePattern string
+	mux                 *http.ServeMux
 }
 
 // New - HTTP server constructor
-func New(host string, path string) *HttpServer {
+func New(cfg config.Config) *HttpServer {
 	s := &HttpServer{
-		host: host,
-		mux:  http.NewServeMux(),
+		host:                cfg.Host,
+		path:                cfg.Path,
+		defaultRegexPattern: cfg.ContentRegex,
+		defaultTitlePattern: cfg.TitleRegex,
+		mux:                 http.NewServeMux(),
 	}
 
 	return s
@@ -45,6 +51,9 @@ func (h *HttpServer) InitiateServer() error {
 		// POST /api/download - download many
 		api.POST("/download", h.DownloadManyHandler)
 	}
+
+	// Health endpoint
+	api.GET("/health", h.HealthHandler)
 
 	err := router.Run(h.host)
 

@@ -31,3 +31,8 @@ func (h *HttpServer) DownloadManyHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, ContentResponse{Files: allFiles})
 }
+
+// HealthHandler handles GET /api/health requests
+func (h *HttpServer) HealthHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": "ok"})
+}
