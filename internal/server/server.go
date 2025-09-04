@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/ribeirohugo/go_middlewares/pkg/cors"
 
 	"github.com/ribeirohugo/go_content_getter/pkg/config"
 	"github.com/ribeirohugo/go_content_getter/pkg/model"
@@ -21,7 +22,10 @@ type HttpServer struct {
 	path                string
 	defaultRegexPattern string
 	defaultTitlePattern string
-	mux                 *http.ServeMux
+
+	allowedOrigins []string
+
+	mux *http.ServeMux
 }
 
 // New - HTTP server constructor
@@ -31,6 +35,7 @@ func New(cfg config.Config) *HttpServer {
 		path:                cfg.Path,
 		defaultRegexPattern: cfg.ContentRegex,
 		defaultTitlePattern: cfg.TitleRegex,
+		allowedOrigins:      cfg.AllowedOrigins,
 		mux:                 http.NewServeMux(),
 	}
 
@@ -41,8 +46,11 @@ func New(cfg config.Config) *HttpServer {
 func (h *HttpServer) InitiateServer() error {
 	router := gin.Default()
 
-	router.Static("/assets", "./assets")
+	// Middleware
+	router.Use(corsMiddleware(h.allowedOrigins)) // Enables CORS using the custom middleware
 
+	// Static
+	router.Static("/assets", "./assets")
 	router.LoadHTMLFiles("templates/index.html")
 
 	// API group
@@ -50,8 +58,10 @@ func (h *HttpServer) InitiateServer() error {
 	{
 		// POST /api/download - download many
 		api.POST("/download", h.DownloadManyHandler)
+
 		// Health endpoint
 		api.GET("/health", h.HealthHandler)
+
 		// Default patterns endpoint
 		api.GET("/default-patterns", h.DefaultPatternsHandler)
 	}
@@ -59,4 +69,16 @@ func (h *HttpServer) InitiateServer() error {
 	err := router.Run(h.host)
 
 	return err
+}
+
+func corsMiddleware(allowedOrigins []string) gin.HandlerFunc {
+	corsMiddleware := cors.New(allowedOrigins)
+
+	return func(c *gin.Context) {
+		final := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			c.Request = r
+			c.Next()
+		})
+		corsMiddleware.Middleware(final).ServeHTTP(c.Writer, c.Request)
+	}
 }
