@@ -5,6 +5,7 @@ go 1.25
 require (
 	github.com/BurntSushi/toml v1.5.0
 	github.com/gin-gonic/gin v1.10.1
+	github.com/ribeirohugo/go_middlewares v0.7.2
 	github.com/stretchr/testify v1.11.1
 )
 
