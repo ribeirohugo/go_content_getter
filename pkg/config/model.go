@@ -11,11 +11,12 @@ const (
 
 // Config holds configurations data and methods
 type Config struct {
-	ContentRegex string   `toml:"content_regex"`
-	TitleRegex   string   `toml:"title_regex"`
-	Host         string   `toml:"host"`
-	Path         string   `toml:"path"`
-	URL          []string `toml:"url"`
+	ContentRegex   string   `toml:"content_regex"`
+	TitleRegex     string   `toml:"title_regex"`
+	Host           string   `toml:"host"`
+	Path           string   `toml:"path"`
+	URL            []string `toml:"url"`
+	AllowedOrigins []string `toml:"allowed_origins"`
 }
 
 // New is a Getter constructor. It requires:
