@@ -50,8 +50,8 @@ func (h *HttpServer) InitiateServer() error {
 	router.Use(corsMiddleware(h.allowedOrigins)) // Enables CORS using the custom middleware
 
 	// Static
-	router.Static("/assets", "./assets")
-	router.LoadHTMLFiles("templates/index.html")
+	// router.Static("/assets", "./assets")
+	// router.LoadHTMLFiles("templates/index.html")
 
 	// API group
 	api := router.Group("/api")
