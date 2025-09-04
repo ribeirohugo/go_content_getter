@@ -2,7 +2,6 @@
 package server
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,17 +16,16 @@ type Source interface {
 }
 
 type HttpServer struct {
-	source Source
-	host   string
-	mux    *http.ServeMux
+	path string
+	host string
+	mux  *http.ServeMux
 }
 
 // New - HTTP server constructor
-func New(source Source, host string) *HttpServer {
+func New(host string, path string) *HttpServer {
 	s := &HttpServer{
-		source: source,
-		host:   host,
-		mux:    http.NewServeMux(),
+		host: host,
+		mux:  http.NewServeMux(),
 	}
 
 	return s
@@ -41,43 +39,12 @@ func (h *HttpServer) InitiateServer() error {
 
 	router.LoadHTMLFiles("templates/index.html")
 
-	router.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", gin.H{
-			"title": "Home",
-		})
-	})
-
-	router.POST("/", func(c *gin.Context) {
-		err := c.Request.ParseForm()
-		if err != nil {
-			log.Println(err)
-		}
-
-		url := c.Request.PostForm["url_parse"][0]
-
-		_, err = h.source.Get(url)
-		if err != nil {
-			c.HTML(http.StatusOK, "index.html", gin.H{
-				"message": err.Error(),
-			})
-
-			return
-		}
-
-		_, err = h.source.Get(url)
-		if err != nil {
-			c.HTML(http.StatusOK, "index.html", gin.H{
-				"message": err.Error(),
-			})
-
-			return
-		}
-
-		c.HTML(http.StatusOK, "index.html", gin.H{
-			"title":   "Home",
-			"message": "Success!",
-		})
-	})
+	// API group
+	api := router.Group("/api")
+	{
+		// POST /api/download - download many
+		api.POST("/download", h.DownloadManyHandler)
+	}
 
 	err := router.Run(h.host)
 
