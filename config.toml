@@ -1,6 +1,6 @@
 url = []
-content_regex = ""
-title_regex = ""
+content_regex = "src=[\"'](http[s]?://[a-zA-Z0-9/._-]+(?::[0-9]+)?/[a-zA-Z0-9/._-]*[.](?:jpg|gif|png))(?:[?&#].*)?[\"']"
+title_regex = "(?:\\<title\\>)(.*)(?:<\\/title\\>)"
 path = ""
 host = ""
-allowed_origins = []
+allowed_origins = ["http://localhost:3000"]
