@@ -64,7 +64,7 @@ function App() {
         }
         .cg-card {
           background: #fff;
-          max-width: 480px;
+          max-width: 800px;
           margin: 48px auto;
           border-radius: 18px;
           box-shadow: 0 4px 24px 0 rgba(0,0,0,0.08);
@@ -84,6 +84,7 @@ function App() {
           display: block;
         }
         .cg-input, .cg-textarea {
+          box-sizing: border-box;
           width: 100%;
           border: 1.5px solid #c9c9c9;
           border-radius: 8px;
@@ -92,6 +93,7 @@ function App() {
           margin-bottom: 18px;
           background: #f8f9fa;
           transition: border 0.2s;
+          display: block;
         }
         .cg-input:focus, .cg-textarea:focus {
           border: 1.5px solid #5f6fff;
@@ -99,6 +101,7 @@ function App() {
           background: #fff;
         }
         .cg-btn {
+          box-sizing: border-box;
           width: 100%;
           background: linear-gradient(90deg, #5f6fff 0%, #6c63ff 100%);
           color: #fff;
@@ -110,6 +113,7 @@ function App() {
           cursor: pointer;
           box-shadow: 0 2px 8px 0 rgba(95,111,255,0.08);
           transition: background 0.2s, box-shadow 0.2s;
+          display: block;
         }
         .cg-btn:disabled {
           background: #bfc5ff;
@@ -153,9 +157,10 @@ function App() {
           text-decoration: none;
           font-weight: 500;
         }
-        @media (max-width: 600px) {
+        @media (max-width: 900px) {
           .cg-card {
-            padding: 18px 6vw 18px 6vw;
+            max-width: 98vw;
+            padding: 18px 2vw 18px 2vw;
           }
         }
       `}</style>
