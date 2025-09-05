@@ -7,20 +7,21 @@ By defining a Regex pattern it is possible to adjust fetched image addresses or 
 
 Configurations are stored in program root directory ``config.toml`` file.
 
-| Parameter       | Description                                                       | Type       | Default                | Required |
-|:----------------|:------------------------------------------------------------------|:-----------|:-----------------------|:---------|
-| `host`          | Host and port used for server mode application.                   | `string`   | `localhost:8080`       | **NO**   |
-| `path`          | Destiny path where files will be stored.                          | `string`   | ` `                    | **NO**   |
-| `content_regex` | Regular expression to find content over defined `url` address.    | `string`   | ImageSrc <sup>1</sup>  | **NO**   |
-| `title_regex`   | Regular expression to find page title over defined `url` address. | `string`   | HTMLTitle <sup>2</sup> | **NO**   |
-| `url`           | Url address to get all images or content.                         | `[]string` | ` `                    | **YES**  |
+| Parameter         | Description                                                       | Type       | Default                | Required |
+|:------------------|:------------------------------------------------------------------|:-----------|:-----------------------|:---------|
+| `host`            | Host and port used for server mode application.                   | `string`   | `localhost:8080`       | **NO**   |
+| `path`            | Destination path where files will be stored.                      | `string`   | ``                     | **NO**   |
+| `content_regex`   | Regular expression to find content over defined `url` address.    | `string`   | ImageSrc <sup>1</sup>  | **NO**   |
+| `title_regex`     | Regular expression to find page title over defined `url` address. | `string`   | HTMLTitle <sup>2</sup> | **NO**   |
+| `url`             | Url address list to get all images or content.                    | `[]string` | ``                     | **YES**  |
+| `allowed_origins` | List of allowed CORS origins for server mode.                     | `[]string` | `` (disabled / none)   | **NO**   |
 
 <sup>1</sup> - ImageSrc is the following regex source: 
 ``
-src=[\"'](http[s]?://[a-zA-Z0-9/._-]+(?::[0-9]+)?/[a-zA-Z0-9/._-]*[.](?:jpg|gif|png))(?:[?&#].*)?[\"']
+src=["'](http[s]?://[a-zA-Z0-9/._-]+(?::[0-9]+)?/[a-zA-Z0-9/._-]*[.](?:jpg|gif|png))(?:[?&#].*)?["']
 ``
 
-<sup>1</sup> - HTMLTitle is the following regex source:
+<sup>2</sup> - HTMLTitle is the following regex source:
 ``
 (?:\<title\>)(.*)(?:<\/title\>)
 ``
