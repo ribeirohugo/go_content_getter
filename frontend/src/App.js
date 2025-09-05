@@ -105,7 +105,7 @@ function App() {
             <ul>
               {result.map((file, idx) => (
                 <li key={idx}>
-                  <strong>{file.name || file.title || "Untitled"}</strong>
+                  <strong>{file.Filename || "Untitled"}</strong>
                   {file.url && (
                     <span> - <a href={file.url} target="_blank" rel="noopener noreferrer">Download</a></span>
                   )}
