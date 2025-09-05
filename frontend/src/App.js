@@ -36,16 +36,19 @@ function App() {
       return;
     }
     try {
+      const payload = {
+        urls: urlList,
+        contentPattern,
+        titlePattern,
+      };
+      console.log('Request payload:', payload);
       const res = await fetch(`${API_URL}/download-and-store`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          urls: urlList,
-          contentPattern,
-          titlePattern,
-        }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
+      console.log('Response:', data);
       if (!res.ok) {
         setError(data.error || "Unknown error");
       } else {
