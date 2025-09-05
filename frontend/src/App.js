@@ -78,7 +78,7 @@ function App() {
               rows={5}
               value={urls}
               onChange={(e) => setUrls(e.target.value)}
-              placeholder="https://example.com/page1\nhttps://example.com/page2"
+              placeholder={`https://example.com/page1\nhttps://example.com/page2`}
             />
             <label className="cg-label">Content Pattern:</label>
             <input
