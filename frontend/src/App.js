@@ -103,7 +103,7 @@ function App() {
                 {result.map((file, index) => (
                   <li key={index}>
                     <a href={file.url} target="_blank" rel="noopener noreferrer">
-                      {file.name}
+                      {file.Filename}
                     </a>
                     <strong>{file.size}</strong>
                   </li>
