@@ -71,3 +71,25 @@ if err != nil {
     log.Println(err)
 }
 ```
+
+## 5. Server
+
+Server mode allows to run a web server API that allows to use `go_content_getter` features through a web interface.
+
+### 5.1 Build and Run
+
+To run the server mode, execute the following command:
+
+``go run cmd/server/server.go``
+
+Then open your browser and navigate to ``http://localhost:8080``
+(or the host and port defined in your config.toml file).
+
+### 5.2. Frontend
+
+The frontend can be accessed using ReactJS `frontend` folder, and it allows to access server API.
+To run this application execute the following command:
+
+``npm start``
+
+For more information, please refer to the [frontend/README.md](frontend/README.md) file.
