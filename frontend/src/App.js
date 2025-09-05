@@ -36,7 +36,7 @@ function App() {
       return;
     }
     try {
-      const res = await fetch(`${API_URL}/download`, {
+      const res = await fetch(`${API_URL}/download-and-store`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
