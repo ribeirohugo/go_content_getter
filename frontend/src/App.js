@@ -57,65 +57,155 @@ function App() {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: "40px auto", fontFamily: "sans-serif" }}>
-      <h2>Download Many Targets</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: 16 }}>
-          <label>URLs (one per line):</label>
-          <br />
+    <>
+      <style>{`
+        body {
+          background: #f6f8fa;
+        }
+        .cg-card {
+          background: #fff;
+          max-width: 480px;
+          margin: 48px auto;
+          border-radius: 18px;
+          box-shadow: 0 4px 24px 0 rgba(0,0,0,0.08);
+          padding: 32px 28px 28px 28px;
+        }
+        .cg-title {
+          font-size: 2rem;
+          font-weight: 700;
+          color: #22223b;
+          margin-bottom: 24px;
+          text-align: center;
+        }
+        .cg-label {
+          font-weight: 500;
+          color: #4a4e69;
+          margin-bottom: 6px;
+          display: block;
+        }
+        .cg-input, .cg-textarea {
+          width: 100%;
+          border: 1.5px solid #c9c9c9;
+          border-radius: 8px;
+          padding: 10px 12px;
+          font-size: 1rem;
+          margin-bottom: 18px;
+          background: #f8f9fa;
+          transition: border 0.2s;
+        }
+        .cg-input:focus, .cg-textarea:focus {
+          border: 1.5px solid #5f6fff;
+          outline: none;
+          background: #fff;
+        }
+        .cg-btn {
+          width: 100%;
+          background: linear-gradient(90deg, #5f6fff 0%, #6c63ff 100%);
+          color: #fff;
+          border: none;
+          border-radius: 8px;
+          padding: 12px 0;
+          font-size: 1.1rem;
+          font-weight: 600;
+          cursor: pointer;
+          box-shadow: 0 2px 8px 0 rgba(95,111,255,0.08);
+          transition: background 0.2s, box-shadow 0.2s;
+        }
+        .cg-btn:disabled {
+          background: #bfc5ff;
+          cursor: not-allowed;
+        }
+        .cg-error {
+          color: #e63946;
+          background: #fff0f3;
+          border-radius: 6px;
+          padding: 10px 14px;
+          margin-top: 18px;
+          font-size: 1rem;
+          text-align: center;
+        }
+        .cg-results {
+          margin-top: 32px;
+        }
+        .cg-results h3 {
+          color: #22223b;
+          font-size: 1.2rem;
+          margin-bottom: 12px;
+        }
+        .cg-list {
+          list-style: none;
+          padding: 0;
+        }
+        .cg-list li {
+          background: #f4f6fb;
+          border-radius: 7px;
+          margin-bottom: 10px;
+          padding: 10px 14px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .cg-list strong {
+          color: #22223b;
+        }
+        .cg-list a {
+          color: #5f6fff;
+          text-decoration: none;
+          font-weight: 500;
+        }
+        @media (max-width: 600px) {
+          .cg-card {
+            padding: 18px 6vw 18px 6vw;
+          }
+        }
+      `}</style>
+      <div className="cg-card">
+        <div className="cg-title">Download Many Targets</div>
+        <form onSubmit={handleSubmit} autoComplete="off">
+          <label className="cg-label">URLs (one per line):</label>
           <textarea
+            className="cg-textarea"
             rows={5}
-            style={{ width: "100%" }}
             value={urls}
             onChange={(e) => setUrls(e.target.value)}
             placeholder="https://example.com/page1\nhttps://example.com/page2"
           />
-        </div>
-        <div style={{ marginBottom: 16 }}>
-          <label>Content Pattern:</label>
-          <br />
+          <label className="cg-label">Content Pattern:</label>
           <input
+            className="cg-input"
             type="text"
-            style={{ width: "100%" }}
             value={contentPattern}
             onChange={(e) => setContentPattern(e.target.value)}
           />
-        </div>
-        <div style={{ marginBottom: 16 }}>
-          <label>Title Pattern:</label>
-          <br />
+          <label className="cg-label">Title Pattern:</label>
           <input
+            className="cg-input"
             type="text"
-            style={{ width: "100%" }}
             value={titlePattern}
             onChange={(e) => setTitlePattern(e.target.value)}
           />
-        </div>
-        <button type="submit" disabled={loading}>
-          {loading ? "Downloading..." : "Download"}
-        </button>
-      </form>
-      {error && <div style={{ color: "red", marginTop: 16 }}>{error}</div>}
-      {result && (
-        <div style={{ marginTop: 24 }}>
-          <h3>Results</h3>
-          {result.length === 0 ? (
-            <div>No files found.</div>
-          ) : (
-            <ul>
-              {result.map((file, idx) => (
-                <li key={idx}>
-                  <strong>{file.Filename || "Untitled"}</strong>
-                  {file.url && (
-                    <span> - <a href={file.url} target="_blank" rel="noopener noreferrer">Download</a></span>
-                  )}
+          <button className="cg-btn" type="submit" disabled={loading}>
+            {loading ? "Downloading..." : "Download"}
+          </button>
+        </form>
+        {error && <div className="cg-error">{error}</div>}
+        {result && (
+          <div className="cg-results">
+            <h3>Results:</h3>
+            <ul className="cg-list">
+              {result.map((file, index) => (
+                <li key={index}>
+                  <a href={file.url} target="_blank" rel="noopener noreferrer">
+                    {file.name}
+                  </a>
+                  <strong>{file.size}</strong>
                 </li>
               ))}
             </ul>
-          )}
-        </div>
-      )}
-    </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
