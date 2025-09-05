@@ -1,32 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 48" role="img" aria-labelledby="title desc">
-  <title id="title">Content Getter Logo</title>
-  <desc id="desc">Stylized CG monogram with gradient pill shape</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 72" role="img" aria-labelledby="logoTitle logoDesc">
+  <title id="logoTitle">Content Getter</title>
+  <desc id="logoDesc">Download icon followed by the words Content Getter in modern bold lettering</desc>
   <defs>
-    <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0bbbe8"/>
-      <stop offset="100%" stop-color="#055b73"/>
+    <linearGradient id="gradIcon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0aaee0"/>
+      <stop offset="100%" stop-color="#066b85"/>
     </linearGradient>
-    <linearGradient id="txt" x1="0" y1="0" x2="1" y2="0">
+    <linearGradient id="gradText" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#d4f7ff"/>
+      <stop offset="100%" stop-color="#e6f9fd"/>
     </linearGradient>
-    <filter id="shadow" x="-10%" y="-30%" width="130%" height="160%" color-interpolation-filters="sRGB">
-      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#012d38" flood-opacity="0.35"/>
+    <filter id="soft" x="-10%" y="-10%" width="130%" height="140%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#023a48" flood-opacity="0.30"/>
     </filter>
   </defs>
-  <g filter="url(#shadow)">
-    <rect x="4" y="4" rx="20" width="172" height="40" fill="url(#lg)" />
+  <!-- Download icon (circle + arrow) -->
+  <g transform="translate(8 8)" filter="url(#soft)">
+    <circle cx="28" cy="28" r="28" fill="url(#gradIcon)"/>
+    <!-- Tray -->
+    <path d="M14 44c0-1.1.9-2 2-2h24c1.1 0 2 .9 2 2v2c0 1.1-.9 2-2 2H16c-1.1 0-2-.9-2-2v-2Z" fill="#ffffff" fill-opacity="0.92"/>
+    <!-- Arrow -->
+    <path d="M28 14c1.1 0 2 .9 2 2v16.17l5.24-5.25a2 2 0 0 1 2.83 2.83l-9 9a2 2 0 0 1-2.83 0l-9-9a2 2 0 0 1 2.83-2.83L26 32.17V16c0-1.1.9-2 2-2Z" fill="#ffffff"/>
   </g>
-  <g font-family="Inter,Segoe UI,Roboto,Arial,sans-serif" font-weight="700" font-size="24" fill="url(#txt)" letter-spacing="1">
-    <text x="28" y="33">C</text>
-    <text x="60" y="33">G</text>
-  </g>
-  <g fill="#e9fcff" opacity="0.9">
-    <path d="M108 16h5.2l6.1 16h-5l-1-3h-5.7l-1.1 3h-4.7L108 16Zm4.4 10-1.8-5.5-1.9 5.5h3.7Z"/>
-    <path d="M122.2 16h4.6v12.4h7.5V32h-12.1V16Z"/>
-    <path d="M136.5 16h4.7v16h-4.7V16Z"/>
-    <path d="M144.4 16h4.6v12.4h7.5V32h-12.1V16Z"/>
-    <path d="M158.7 16h4.7v16h-4.7V16Z"/>
+  <!-- Text -->
+  <g font-family="Inter,Segoe UI,Roboto,Arial,sans-serif" font-weight="700" font-size="44" fill="url(#gradText)" letter-spacing="2.5" style="paint-order:stroke fill markers;">
+    <text x="100" y="54">Content Getter</text>
   </g>
 </svg>
-

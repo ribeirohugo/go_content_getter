@@ -13,10 +13,10 @@ html, body {
   left: 0;
   width: 100%;
   height: 64px;
-  background: #23243a;
+  background: linear-gradient(120deg, #0aaee0 0%, #066b85 100%);
   display: flex;
   align-items: center;
-  box-shadow: 0 4px 16px 0 rgba(34,34,59,0.07);
+  box-shadow: 0 4px 18px 0 rgba(0,0,0,0.25);
   z-index: 1000;
 }
 .cg-navbar-content {
@@ -28,26 +28,26 @@ html, body {
   padding: 0 32px;
 }
 .cg-navbar-logo, .cg-logo {
-  height: 38px;
+  height: 40px;
   width: auto;
+  margin-right: 28px;
   display: block;
-  margin-right: 36px;
   user-select: none;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
 }
 .cg-navbar-link {
-  color: #e0e0f0;
+  color: #f2fbfd;
   text-decoration: none;
-  font-size: 1.08rem;
+  font-size: 1.05rem;
   font-weight: 500;
-  margin-right: 24px;
+  margin-right: 20px;
   padding: 8px 14px;
   border-radius: 6px;
   transition: background 0.18s, color 0.18s;
 }
 .cg-navbar-link:hover {
-  background: #35355a;
-  color: #5f6fff;
+  background: rgba(255,255,255,0.14);
+  color: #ffffff;
 }
 .cg-card {
   background: #fff;
@@ -94,7 +94,7 @@ html, body {
 }
 .cg-btn {
   width: 100%;
-  background: linear-gradient(90deg, #5f6fff 0%, #6c63ff 100%);
+  background: linear-gradient(90deg,#0aaee0 0%,#066b85 100%);
   color: #fff;
   border: none;
   border-radius: 8px;
