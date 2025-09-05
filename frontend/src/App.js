@@ -64,7 +64,7 @@ function App() {
     <>
       <nav className="cg-navbar">
         <div className="cg-navbar-content">
-          <span className="cg-navbar-logo">Content Getter</span>
+          <img src="/logo.svg" alt="CG Logo" className="cg-logo" />
           <a href="/" className="cg-navbar-link">Home</a>
         </div>
       </nav>

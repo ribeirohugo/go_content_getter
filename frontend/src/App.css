@@ -27,14 +27,13 @@ html, body {
   align-items: center;
   padding: 0 32px;
 }
-.cg-navbar-logo {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: 0.04em;
+.cg-navbar-logo, .cg-logo {
+  height: 38px;
+  width: auto;
+  display: block;
   margin-right: 36px;
-  text-shadow: 0 2px 8px rgba(34,34,59,0.10);
   user-select: none;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
 }
 .cg-navbar-link {
   color: #e0e0f0;
@@ -168,4 +167,3 @@ html, body {
 .cg-content {
   margin-top: 80px;
 }
-
