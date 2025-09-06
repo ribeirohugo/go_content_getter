@@ -14,7 +14,7 @@ export default function DownloadContentView({ apiUrl }) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
-  const [store, setStore] = useState(false);
+  const [store, setStore] = useState(true);
 
   useEffect(() => {
     fetch(`${API_URL}/patterns`)
@@ -154,7 +154,7 @@ export default function DownloadContentView({ apiUrl }) {
             onChange={(e) => setStore(e.target.checked)}
             style={{ marginRight: '6px' }}
           />
-          Store
+          Store locally?
         </label>
       </form>
 

@@ -5,7 +5,7 @@ export default function DownloadURLsView({ apiUrl }) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
-  const [store, setStore] = useState(false);
+  const [store, setStore] = useState(true);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -66,7 +66,7 @@ export default function DownloadURLsView({ apiUrl }) {
             onChange={(e) => setStore(e.target.checked)}
             style={{ marginRight: '6px' }}
           />
-          Store
+          Store locally?
         </label>
       </form>
 
