@@ -17,7 +17,8 @@ func Target(target model.Target) (model.File, error) {
 		return model.File{}, fmt.Errorf("error making HTTP request to \"%s\": %s", target.URL, err.Error())
 	}
 
-	if response.StatusCode == http.StatusOK {
+	switch response.StatusCode {
+	case http.StatusOK:
 		bodyBytes, err := io.ReadAll(response.Body)
 		if err != nil {
 			return model.File{}, fmt.Errorf("error reading response body: %s", err.Error())
@@ -29,7 +30,7 @@ func Target(target model.Target) (model.File, error) {
 		}
 
 		return file, nil
-	} else if response.StatusCode == http.StatusNotFound {
+	case http.StatusNotFound:
 		log.Printf("File not found for URL: %s\n", target.URL)
 
 		return model.File{}, nil
