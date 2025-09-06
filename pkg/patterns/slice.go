@@ -10,7 +10,7 @@ var PatternMap = []model.Pattern{
 	},
 	{
 		Description: "Image from src attribute",
-		Regex:       ImageContentFromHrefURL,
+		Regex:       ImageSrc,
 	},
 	{
 		Description: "Image from Href URL",
