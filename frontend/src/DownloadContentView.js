@@ -14,6 +14,7 @@ export default function DownloadContentView({ apiUrl }) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
+  const [store, setStore] = useState(false);
 
   useEffect(() => {
     fetch(`${API_URL}/patterns`)
@@ -62,6 +63,7 @@ export default function DownloadContentView({ apiUrl }) {
         urls: urlList,
         contentPattern: finalContentPattern,
         titlePattern: finalTitlePattern,
+        Store: store,
       };
 
       const res = await fetch(`${API_URL}/download-and-store`, {
@@ -141,9 +143,19 @@ export default function DownloadContentView({ apiUrl }) {
           />
         )}
 
+
         <button className="cg-btn" type="submit" disabled={loading}>
           {loading ? "Downloading..." : "Download"}
         </button>
+        <label style={{ display: 'block', marginTop: '8px' }}>
+          <input
+            type="checkbox"
+            checked={store}
+            onChange={(e) => setStore(e.target.checked)}
+            style={{ marginRight: '6px' }}
+          />
+          Store
+        </label>
       </form>
 
       {error && <div className="cg-error">{error}</div>}
@@ -166,4 +178,3 @@ export default function DownloadContentView({ apiUrl }) {
     </div>
   );
 }
-
