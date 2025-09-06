@@ -13,14 +13,22 @@ type ContentResponse struct {
 	Files []model.File `json:"files"`
 }
 
+// ContentCompressedResponse represents the downloaded content in compressed mode.
+type ContentCompressedResponse struct {
+	Title   string `json:"title"`
+	ZipFile []byte `json:"zipFile"`
+}
+
 // DownloadRequest represents the request body for download content
 type DownloadRequest struct {
 	URLs           []string `json:"urls"`
 	ContentPattern string   `json:"contentPattern"`
 	TitlePattern   string   `json:"titlePattern"`
+	Store          bool     `json:"store"`
 }
 
 // DownloadURLRequest represents the request body for download a URL content
 type DownloadURLRequest struct {
-	URL string
+	URL   string
+	Store bool `json:"store"`
 }
