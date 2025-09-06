@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/ribeirohugo/go_content_getter/pkg/model"
+	"github.com/ribeirohugo/go_content_getter/pkg/patterns"
 	"github.com/ribeirohugo/go_content_getter/pkg/source"
 )
 
@@ -34,7 +35,12 @@ func (h *HttpServer) DefaultPatternsHandler(c *gin.Context) {
 	})
 }
 
-// handleDownload centraliza lógica de download (com ou sem store) reduzindo duplicação.
+// LoadPatternsHandler loads existing default patterns and returns it
+func (h *HttpServer) LoadPatternsHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, patterns.PatternMap)
+}
+
+// handleDownload is responsible for download process used by controllers
 func (h *HttpServer) handleDownload(c *gin.Context, useStore bool) {
 	var req DownloadRequest
 	if err := c.ShouldBindJSON(&req); err != nil || len(req.URLs) == 0 {
