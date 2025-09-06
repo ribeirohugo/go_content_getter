@@ -23,7 +23,7 @@ func TestGetFileExtension(t *testing.T) {
 
 		// Edge cases
 		{"https://teste.com/path/", ""},            // no file
-		{"https://teste.com", ""},                  // should return
+		{"https://teste.com", ""},                  // no path
 		{"https://teste.com/.hiddenfile", ""},      // hidden file without ext
 		{"https://teste.com/image.jpeg", "jpeg"},   // normal case
 		{"file://localhost/etc/hosts", ""},         // file without ext
