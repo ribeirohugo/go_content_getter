@@ -61,7 +61,6 @@ func (h *HttpServer) InitiateServer() error {
 		api.POST("/download-and-store", h.DownloadAndStoreManyHandler)
 
 		// Patterns
-		api.GET("/default-patterns", h.DefaultPatternsHandler)
 		api.GET("/patterns", h.LoadPatternsHandler)
 
 		// Health endpoint

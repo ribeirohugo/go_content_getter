@@ -27,14 +27,6 @@ func (h *HttpServer) HealthHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "ok"})
 }
 
-// DefaultPatternsHandler handles GET /api/default-patterns requests
-func (h *HttpServer) DefaultPatternsHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, DefaultPatternsResponse{
-		ContentPattern: h.defaultRegexPattern,
-		TitlePattern:   h.defaultTitlePattern,
-	})
-}
-
 // LoadPatternsHandler loads existing default patterns and returns it
 func (h *HttpServer) LoadPatternsHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, patterns.PatternMap)

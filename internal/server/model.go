@@ -19,9 +19,3 @@ type DownloadRequest struct {
 	ContentPattern string   `json:"contentPattern"`
 	TitlePattern   string   `json:"titlePattern"`
 }
-
-// DefaultPatternsResponse represents the response for default regex patterns
-type DefaultPatternsResponse struct {
-	ContentPattern string `json:"contentPattern"`
-	TitlePattern   string `json:"titlePattern"`
-}
