@@ -25,8 +25,21 @@ function App() {
         setPatterns(Array.isArray(data) ? data : []);
         if (Array.isArray(data) && data.length > 0) {
           const firstRegex = data[0].Regex || data[0].regex || "";
-          setContentPatternSelect(firstRegex);
-          setTitlePatternSelect(firstRegex);
+
+          // prefer "Image from src attribute" for content default when available
+          const imgSrc = data.find(
+            (p) => (p.Description || p.description || "") === "Image from src attribute"
+          );
+          const contentDefault = (imgSrc && (imgSrc.Regex || imgSrc.regex)) || firstRegex;
+
+          // prefer "HTML title" for title default when available
+          const htmlTitle = data.find(
+            (p) => (p.Description || p.description || "") === "HTML title"
+          );
+          const titleDefault = (htmlTitle && (htmlTitle.Regex || htmlTitle.regex)) || firstRegex;
+
+          setContentPatternSelect(contentDefault);
+          setTitlePatternSelect(titleDefault);
         }
       })
       .catch(() => {});
