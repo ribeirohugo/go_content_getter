@@ -59,6 +59,7 @@ func (h *HttpServer) InitiateServer() error {
 		// Download and Store
 		api.POST("/download", h.DownloadManyHandler)
 		api.POST("/download-and-store", h.DownloadAndStoreManyHandler)
+		api.POST("/download-urls", h.DownloadURLsHandler)
 
 		// Patterns
 		api.GET("/patterns", h.LoadPatternsHandler)
