@@ -3,7 +3,6 @@ package server
 import (
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -57,10 +56,7 @@ func (h *HttpServer) handleDownload(c *gin.Context, useStore bool) {
 
 		if err != nil {
 			log.Println(err.Error())
-			if strings.Contains(err.Error(), "404") {
-				log.Printf("Skipping 404 for URL: %s", url)
-				continue
-			}
+
 			c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
 			return
 		}

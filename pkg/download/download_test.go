@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/ribeirohugo/go_content_getter/pkg/model"
 )
@@ -47,9 +48,26 @@ func TestTarget(t *testing.T) {
 		assert.Contains(t, err.Error(), "error making HTTP request")
 	})
 
-	t.Run("status not ok", func(t *testing.T) {
+	t.Run("status not found", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "not found", http.StatusNotFound)
+		}))
+		defer server.Close()
+
+		target := model.Target{
+			URL:      server.URL,
+			Filename: "404.txt",
+		}
+
+		file, err := Target(target)
+
+		require.NoError(t, err)
+		assert.Equal(t, model.File{}, file)
+	})
+
+	t.Run("status not ok", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			http.Error(w, "not found", http.StatusInternalServerError)
 		}))
 		defer server.Close()
 
@@ -61,7 +79,7 @@ func TestTarget(t *testing.T) {
 		_, err := Target(target)
 
 		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "error response status: 404 Not Found")
+		assert.Contains(t, err.Error(), "error response status: 500 Internal Server Error")
 	})
 }
 
