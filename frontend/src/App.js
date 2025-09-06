@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import './App.css';
 import DownloadURLsView from './DownloadURLsView';
+import DownloadContentView from './DownloadContentView';
 
 const API_URL = process.env.REACT_APP_API_URL || "/api";
 
@@ -115,85 +116,7 @@ function App() {
         {view === 'download-urls' ? (
           <DownloadURLsView apiUrl={API_URL} />
         ) : (
-          <div className="cg-card">
-            <div className="cg-title">Download Content</div>
-            <form onSubmit={handleSubmit} autoComplete="off">
-              <label className="cg-label">URLs (one per line):</label>
-              <textarea
-                className="cg-textarea"
-                rows={5}
-                value={urls}
-                onChange={(e) => setUrls(e.target.value)}
-                placeholder={`https://example.com/page1\nhttps://example.com/page2`}
-              />
-
-              <label className="cg-label">Content Pattern:</label>
-              <select
-                className="cg-input"
-                value={contentPatternSelect}
-                onChange={(e) => setContentPatternSelect(e.target.value)}
-              >
-                {patterns.map((p, i) => (
-                  <option key={i} value={p.Regex || p.regex}>
-                    {`${p.Description || p.description}: ${p.Regex || p.regex}`}
-                  </option>
-                ))}
-                <option value="__custom__">Custom...</option>
-              </select>
-              {contentPatternSelect === "__custom__" && (
-                <input
-                  className="cg-input"
-                  type="text"
-                  value={contentPatternCustom}
-                  onChange={(e) => setContentPatternCustom(e.target.value)}
-                  placeholder="Enter custom regex"
-                />
-              )}
-
-              <label className="cg-label">Title Pattern:</label>
-              <select
-                className="cg-input"
-                value={titlePatternSelect}
-                onChange={(e) => setTitlePatternSelect(e.target.value)}
-              >
-                {patterns.map((p, i) => (
-                  <option key={i} value={p.Regex || p.regex}>
-                    {`${p.Description || p.description}: ${p.Regex || p.regex}`}
-                  </option>
-                ))}
-                <option value="__custom__">Custom...</option>
-              </select>
-              {titlePatternSelect === "__custom__" && (
-                <input
-                  className="cg-input"
-                  type="text"
-                  value={titlePatternCustom}
-                  onChange={(e) => setTitlePatternCustom(e.target.value)}
-                  placeholder="Enter custom regex"
-                />
-              )}
-
-              <button className="cg-btn" type="submit" disabled={loading}>
-                {loading ? "Downloading..." : "Download"}
-              </button>
-            </form>
-            {error && <div className="cg-error">{error}</div>}
-            {result && (
-              <div className="cg-results">
-                <h3>Results:</h3>
-                <ul className="cg-list">
-                  {result.map((file, index) => (
-                    <li key={index}>
-                      <a href={file.url} target="_blank" rel="noopener noreferrer">
-                        {file.Filename}
-                      </a>
-                      <strong>{file.size}</strong>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
+          <DownloadContentView apiUrl={API_URL} />
         )}
       </div>
     </>
