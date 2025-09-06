@@ -38,7 +38,38 @@ func TestGetFileExtension(t *testing.T) {
 	}
 }
 
-// TestGetFullFileName verifies extraction of the filename including the extension
+func TestGetFileName(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		// Basic filenames
+		{"https://teste.com/teste.html?var=dsdds", "teste"},
+		{"https://teste.com/teste.html#section", "teste"},
+		{"https://teste.com/path/file.txt", "file"},
+		{"https://teste.com/file.php?x=1#y", "file"},
+
+		// IPs
+		{"https://172.16.0.1/file.htm?x=1#y", "file"},
+		{"https://192.168.1.1/style.css?x=1#y", "style"},
+
+		// Edge cases
+		{"https://teste.com/path/", ""},                 // no file
+		{"https://teste.com", ""},                       // no path
+		{"https://teste.com/.hiddenfile", ""},           // hidden file without ext
+		{"https://teste.com/image.jpeg", "image"},       // normal case
+		{"file://localhost/etc/hosts", "hosts"},         // file without ext -> hosts
+		{"ftp://example.com/archive.tar.gz", "archive"}, // multiple dots
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.input, func(t *testing.T) {
+			got := GetFileName(tt.input)
+			assert.Equal(t, tt.expected, got)
+		})
+	}
+}
+
 func TestGetFullFileName(t *testing.T) {
 	tests := []struct {
 		input    string
