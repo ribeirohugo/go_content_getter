@@ -5,18 +5,42 @@ const API_URL = process.env.REACT_APP_API_URL || "/api";
 
 function App() {
   const [urls, setUrls] = useState("");
-  const [contentPattern, setContentPattern] = useState("");
-  const [titlePattern, setTitlePattern] = useState("");
+  const [patterns, setPatterns] = useState([]);
+
+  const [contentPatternSelect, setContentPatternSelect] = useState("");
+  const [contentPatternCustom, setContentPatternCustom] = useState("");
+
+  const [titlePatternSelect, setTitlePatternSelect] = useState("");
+  const [titlePatternCustom, setTitlePatternCustom] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch(`${API_URL}/default-patterns`)
+    fetch(`${API_URL}/patterns`)
       .then((res) => res.json())
       .then((data) => {
-        setContentPattern(data.contentPattern || "");
-        setTitlePattern(data.titlePattern || "");
+        // data is expected to be an array of { Description, Regex }
+        setPatterns(Array.isArray(data) ? data : []);
+        if (Array.isArray(data) && data.length > 0) {
+          const firstRegex = data[0].Regex || data[0].regex || "";
+
+          // prefer "Image from src attribute" for content default when available
+          const imgSrc = data.find(
+            (p) => (p.Description || p.description || "") === "Image from src attribute"
+          );
+          const contentDefault = (imgSrc && (imgSrc.Regex || imgSrc.regex)) || firstRegex;
+
+          // prefer "HTML title" for title default when available
+          const htmlTitle = data.find(
+            (p) => (p.Description || p.description || "") === "HTML title"
+          );
+          const titleDefault = (htmlTitle && (htmlTitle.Regex || htmlTitle.regex)) || firstRegex;
+
+          setContentPatternSelect(contentDefault);
+          setTitlePatternSelect(titleDefault);
+        }
       })
       .catch(() => {});
   }, []);
@@ -35,11 +59,16 @@ function App() {
       setLoading(false);
       return;
     }
+
+    // Decide final patterns: if select is '__custom__' use custom value, otherwise use selected regex
+    const finalContentPattern = contentPatternSelect === "__custom__" ? contentPatternCustom : contentPatternSelect;
+    const finalTitlePattern = titlePatternSelect === "__custom__" ? titlePatternCustom : titlePatternSelect;
+
     try {
       const payload = {
         urls: urlList,
-        contentPattern,
-        titlePattern,
+        contentPattern: finalContentPattern,
+        titlePattern: finalTitlePattern,
       };
       console.log('Request payload:', payload);
       const res = await fetch(`${API_URL}/download-and-store`, {
@@ -80,20 +109,53 @@ function App() {
               onChange={(e) => setUrls(e.target.value)}
               placeholder={`https://example.com/page1\nhttps://example.com/page2`}
             />
+
             <label className="cg-label">Content Pattern:</label>
-            <input
+            <select
               className="cg-input"
-              type="text"
-              value={contentPattern}
-              onChange={(e) => setContentPattern(e.target.value)}
-            />
+              value={contentPatternSelect}
+              onChange={(e) => setContentPatternSelect(e.target.value)}
+            >
+              {patterns.map((p, i) => (
+                <option key={i} value={p.Regex || p.regex}>
+                  {`${p.Description || p.description}: ${p.Regex || p.regex}`}
+                </option>
+              ))}
+              <option value="__custom__">Custom...</option>
+            </select>
+            {contentPatternSelect === "__custom__" && (
+              <input
+                className="cg-input"
+                type="text"
+                value={contentPatternCustom}
+                onChange={(e) => setContentPatternCustom(e.target.value)}
+                placeholder="Enter custom regex"
+              />
+            )}
+
             <label className="cg-label">Title Pattern:</label>
-            <input
+            <select
               className="cg-input"
-              type="text"
-              value={titlePattern}
-              onChange={(e) => setTitlePattern(e.target.value)}
-            />
+              value={titlePatternSelect}
+              onChange={(e) => setTitlePatternSelect(e.target.value)}
+            >
+              {patterns.map((p, i) => (
+                <option key={i} value={p.Regex || p.regex}>
+                  {`${p.Description || p.description}: ${p.Regex || p.regex}`}
+                </option>
+              ))}
+              <option value="__custom__">Custom...</option>
+            </select>
+            {titlePatternSelect === "__custom__" && (
+              <input
+                className="cg-input"
+                type="text"
+                value={titlePatternCustom}
+                onChange={(e) => setTitlePatternCustom(e.target.value)}
+                placeholder="Enter custom regex"
+              />
+            )}
+
             <button className="cg-btn" type="submit" disabled={loading}>
               {loading ? "Downloading..." : "Download"}
             </button>

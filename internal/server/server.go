@@ -60,11 +60,11 @@ func (h *HttpServer) InitiateServer() error {
 		api.POST("/download", h.DownloadManyHandler)
 		api.POST("/download-and-store", h.DownloadAndStoreManyHandler)
 
+		// Patterns
+		api.GET("/patterns", h.LoadPatternsHandler)
+
 		// Health endpoint
 		api.GET("/health", h.HealthHandler)
-
-		// Default patterns endpoint
-		api.GET("/default-patterns", h.DefaultPatternsHandler)
 	}
 
 	err := router.Run(h.host)
