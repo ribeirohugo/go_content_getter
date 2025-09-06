@@ -4,6 +4,7 @@ package download
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/ribeirohugo/go_content_getter/pkg/model"
@@ -28,6 +29,10 @@ func Target(target model.Target) (model.File, error) {
 		}
 
 		return file, nil
+	} else if response.StatusCode == http.StatusNotFound {
+		log.Printf("File not found for URL: %s\n", target.URL)
+
+		return model.File{}, nil
 	}
 
 	return model.File{}, fmt.Errorf("error response status: %s", response.Status)
@@ -42,7 +47,9 @@ func ManyTargets(targets []model.Target) ([]model.File, error) {
 			return files, err
 		}
 
-		files = append(files, file)
+		if file.Filename != "" {
+			files = append(files, file)
+		}
 	}
 
 	return files, nil
