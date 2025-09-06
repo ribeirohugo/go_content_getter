@@ -17,12 +17,7 @@ import (
 
 // DownloadManyHandler handles POST /api/download requests
 func (h *HttpServer) DownloadManyHandler(c *gin.Context) {
-	h.handleDownload(c, false)
-}
-
-// DownloadAndStoreManyHandler handles download and store content
-func (h *HttpServer) DownloadAndStoreManyHandler(c *gin.Context) {
-	h.handleDownload(c, true)
+	h.handleDownload(c)
 }
 
 // DownloadURLsHandler downloads content from one or many URLs.
@@ -77,7 +72,7 @@ func (h *HttpServer) LoadPatternsHandler(c *gin.Context) {
 }
 
 // handleDownload is responsible for download process used by controllers
-func (h *HttpServer) handleDownload(c *gin.Context, useStore bool) {
+func (h *HttpServer) handleDownload(c *gin.Context) {
 	var req DownloadRequest
 	if err := c.ShouldBindJSON(&req); err != nil || len(req.URLs) == 0 {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid or missing urls in body"})
@@ -93,7 +88,7 @@ func (h *HttpServer) handleDownload(c *gin.Context, useStore bool) {
 			err   error
 		)
 
-		if useStore {
+		if req.Store {
 			files, err = downloadSource.GetAndStore(url)
 		} else {
 			files, err = downloadSource.Get(url)
@@ -108,5 +103,15 @@ func (h *HttpServer) handleDownload(c *gin.Context, useStore bool) {
 		allFiles = append(allFiles, files...)
 	}
 
-	c.JSON(http.StatusOK, ContentResponse{Files: allFiles})
+	if req.Store {
+		c.JSON(http.StatusOK, ContentResponse{Files: allFiles})
+		return
+	}
+
+	compressedFiles, err := ZipFiles(allFiles)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+	}
+
+	c.JSON(http.StatusOK, ContentCompressedResponse{ZipFile: compressedFiles})
 }
