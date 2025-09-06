@@ -19,3 +19,8 @@ type DownloadRequest struct {
 	ContentPattern string   `json:"contentPattern"`
 	TitlePattern   string   `json:"titlePattern"`
 }
+
+// DownloadURLRequest represents the request body for download a URL content
+type DownloadURLRequest struct {
+	URL string
+}
