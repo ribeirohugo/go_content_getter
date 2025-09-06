@@ -6,6 +6,7 @@ const API_URL = process.env.REACT_APP_API_URL || "/api";
 function App() {
   const [urls, setUrls] = useState("");
   const [patterns, setPatterns] = useState([]);
+  const [navOpen, setNavOpen] = useState(false);
 
   const [contentPatternSelect, setContentPatternSelect] = useState("");
   const [contentPatternCustom, setContentPatternCustom] = useState("");
@@ -94,7 +95,17 @@ function App() {
       <nav className="cg-navbar">
         <div className="cg-navbar-content">
           <img src="/logo.svg" alt="CG Logo" className="cg-logo" />
-          <a href="/" className="cg-navbar-link">Home</a>
+          <div className={`cg-navbar-links ${navOpen ? 'open' : ''}`}>
+            <a href="/" className="cg-navbar-link">Home</a>
+          </div>
+
+          <button className="cg-trigram" aria-label="Menu" onClick={() => setNavOpen(!navOpen)}>
+            <svg width="28" height="18" viewBox="0 0 28 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="0" y="1" width="28" height="2" rx="1" fill="#FFFFFF" />
+              <rect x="0" y="8" width="28" height="2" rx="1" fill="#FFFFFF" />
+              <rect x="0" y="15" width="28" height="2" rx="1" fill="#FFFFFF" />
+            </svg>
+          </button>
         </div>
       </nav>
       <div className="cg-content">
