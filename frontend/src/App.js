@@ -98,8 +98,8 @@ function App() {
         <div className="cg-navbar-content">
           <img src="/logo.svg" alt="CG Logo" className="cg-logo" />
           <div className={`cg-navbar-links ${navOpen ? 'open' : ''}`}>
-            <a href="#" className="cg-navbar-link" onClick={(e)=>{e.preventDefault(); setView('content'); setNavOpen(false);}}>Home</a>
-            <a href="#" className="cg-navbar-link" onClick={(e)=>{e.preventDefault(); setView('download-urls'); setNavOpen(false);}}>Download URLs</a>
+            <a href="#" className="cg-navbar-link" onClick={(e)=>{e.preventDefault(); setView('content'); setNavOpen(false);}}>Content</a>
+            <a href="#" className="cg-navbar-link" onClick={(e)=>{e.preventDefault(); setView('download-urls'); setNavOpen(false);}}>URLs</a>
           </div>
 
           <button className="cg-trigram" aria-label="Menu" onClick={() => setNavOpen(!navOpen)}>

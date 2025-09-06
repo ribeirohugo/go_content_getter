@@ -44,7 +44,7 @@ export default function DownloadURLsView({ apiUrl }) {
 
   return (
     <div className="cg-card">
-      <div className="cg-title">Download URLs</div>
+      <div className="cg-title">Download from URLs</div>
       <form onSubmit={handleSubmit} autoComplete="off">
         <label className="cg-label">URLs (one per line):</label>
         <textarea
@@ -56,7 +56,7 @@ export default function DownloadURLsView({ apiUrl }) {
         />
 
         <button className="cg-btn" type="submit" disabled={loading}>
-          {loading ? "Downloading..." : "Download URLs"}
+          {loading ? "Downloading..." : "Download"}
         </button>
       </form>
 
