@@ -6,12 +6,12 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ribeirohugo/go_content_getter/pkg/download"
-	"github.com/ribeirohugo/go_content_getter/pkg/store"
 
+	"github.com/ribeirohugo/go_content_getter/pkg/download"
 	"github.com/ribeirohugo/go_content_getter/pkg/model"
 	"github.com/ribeirohugo/go_content_getter/pkg/patterns"
 	"github.com/ribeirohugo/go_content_getter/pkg/source"
+	"github.com/ribeirohugo/go_content_getter/pkg/store"
 	urlUtils "github.com/ribeirohugo/go_content_getter/pkg/url"
 )
 
