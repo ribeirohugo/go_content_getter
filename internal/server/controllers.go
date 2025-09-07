@@ -17,62 +17,6 @@ import (
 
 // DownloadManyHandler handles POST /api/download requests
 func (h *HttpServer) DownloadManyHandler(c *gin.Context) {
-	h.handleDownload(c)
-}
-
-// DownloadURLsHandler downloads content from one or many URLs.
-func (h *HttpServer) DownloadURLsHandler(c *gin.Context) {
-	var req DownloadRequest
-	if err := c.ShouldBindJSON(&req); err != nil || len(req.URLs) == 0 {
-		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid or missing urls in body"})
-		return
-	}
-
-	var allFiles []model.File
-	for i, url := range req.URLs {
-		filename := urlUtils.GetFullFileName(url)
-		if filename == "" {
-			filename = fmt.Sprintf("Untitled(%d)", i)
-		}
-
-		target := model.Target{
-			URL:      url,
-			Filename: filename,
-		}
-
-		file, err := download.Target(target)
-		if err != nil {
-			log.Println(err.Error())
-
-			c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
-			return
-		}
-
-		err = store.File(h.path, "", file)
-		if err != nil {
-			log.Println(err.Error())
-
-			c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
-			return
-		}
-		allFiles = append(allFiles, file)
-	}
-
-	c.JSON(http.StatusOK, ContentResponse{Files: allFiles})
-}
-
-// HealthHandler handles GET /api/health requests
-func (h *HttpServer) HealthHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{"status": "ok"})
-}
-
-// LoadPatternsHandler loads existing default patterns and returns it
-func (h *HttpServer) LoadPatternsHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, patterns.PatternMap)
-}
-
-// handleDownload is responsible for download process used by controllers
-func (h *HttpServer) handleDownload(c *gin.Context) {
 	var req DownloadRequest
 	if err := c.ShouldBindJSON(&req); err != nil || len(req.URLs) == 0 {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid or missing urls in body"})
@@ -111,7 +55,79 @@ func (h *HttpServer) handleDownload(c *gin.Context) {
 	compressedFiles, err := ZipFiles(allFiles)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+		return
 	}
 
-	c.JSON(http.StatusOK, ContentCompressedResponse{ZipFile: compressedFiles})
+	c.Header("Content-Type", "application/zip")
+	c.Header("Content-Disposition", "attachment; filename=files.zip")
+	c.Data(http.StatusOK, "application/zip", compressedFiles)
+}
+
+// DownloadURLsHandler downloads content from one or many URLs.
+func (h *HttpServer) DownloadURLsHandler(c *gin.Context) {
+	var req DownloadRequest
+	if err := c.ShouldBindJSON(&req); err != nil || len(req.URLs) == 0 {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid or missing urls in body"})
+		return
+	}
+
+	var allFiles []model.File
+	for i, url := range req.URLs {
+		filename := urlUtils.GetFullFileName(url)
+		if filename == "" {
+			filename = fmt.Sprintf("Untitled(%d)", i)
+		}
+
+		target := model.Target{
+			URL:      url,
+			Filename: filename,
+		}
+
+		file, err := download.Target(target)
+		if err != nil {
+			log.Println(err.Error())
+
+			c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+			return
+		}
+
+		// Only store locally if requested
+		if req.Store {
+			err = store.File(h.path, "", file)
+			if err != nil {
+				log.Println(err.Error())
+
+				c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+				return
+			}
+		}
+		allFiles = append(allFiles, file)
+	}
+
+	if req.Store {
+		c.JSON(http.StatusOK, ContentResponse{Files: allFiles})
+		return
+	}
+
+	// Compress files into a zip and return as binary so frontend can download it
+	compressedFiles, err := ZipFiles(allFiles)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	c.Header("Content-Type", "application/zip")
+	c.Header("Content-Disposition", "attachment; filename=files.zip")
+	c.Data(http.StatusOK, "application/zip", compressedFiles)
+}
+
+// HealthHandler handles GET /api/health requests
+func (h *HttpServer) HealthHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": "ok"})
+}
+
+// LoadPatternsHandler loads existing default patterns and returns it
+func (h *HttpServer) LoadPatternsHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, patterns.PatternMap)
 }

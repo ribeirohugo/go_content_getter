@@ -30,11 +30,34 @@ export default function DownloadURLsView({ apiUrl }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = await res.json();
+
       if (!res.ok) {
-        setError(data.error || "Unknown error");
+        // try parse json error
+        try {
+          const errData = await res.json();
+          setError(errData.error || "Unknown error");
+        } catch (e) {
+          setError("Server error");
+        }
       } else {
-        setResult(data.files || []);
+        const contentType = (res.headers.get("content-type") || "").toLowerCase();
+        if (contentType.includes("application/zip") || contentType.includes("application/octet-stream")) {
+          // binary zip - download
+          const arr = await res.arrayBuffer();
+          const blob = new Blob([arr], { type: "application/zip" });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "files.zip";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.URL.revokeObjectURL(url);
+          setResult([]);
+        } else {
+          const data = await res.json();
+          setResult(data.files || []);
+        }
       }
     } catch (err) {
       setError("Network error");
