@@ -1,5 +1,23 @@
 import React, { useState } from "react";
 
+// Help component: shows a small (?) icon with hover/focus tooltip
+function Help({ text }) {
+  const lines = (text || "").split('\n');
+  return (
+    <span className="cg-help" tabIndex={0} aria-label={text}>
+      <span className="cg-help-dot">?</span>
+      <span className="cg-help-tip">
+        {lines.map((line, i) => (
+          <span key={i}>
+            {line}
+            {i < lines.length - 1 ? <br /> : null}
+          </span>
+        ))}
+      </span>
+    </span>
+  );
+}
+
 export default function DownloadURLsView({ apiUrl }) {
   const [urls, setUrls] = useState("");
   const [loading, setLoading] = useState(false);
@@ -70,7 +88,7 @@ export default function DownloadURLsView({ apiUrl }) {
     <div className="cg-card">
       <div className="cg-title">Download from URLs</div>
       <form onSubmit={handleSubmit} autoComplete="off">
-        <label className="cg-label">URLs (one per line):</label>
+        <label className="cg-label">URLs (one per line): <Help text={"Enter one direct file URL per line.\nEach URL will be downloaded and returned as a file or zip."} /></label>
         <textarea
           className="cg-textarea"
           rows={6}
@@ -89,7 +107,7 @@ export default function DownloadURLsView({ apiUrl }) {
             onChange={(e) => setStore(e.target.checked)}
             style={{ marginRight: '6px' }}
           />
-          Store locally?
+          Store locally? <Help text={"If checked, files will be stored on the server and returned as links.\nOtherwise they may be returned as a zip for direct download."} />
         </label>
       </form>
 
