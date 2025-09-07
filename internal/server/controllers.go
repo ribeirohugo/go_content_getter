@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/ribeirohugo/go_content_getter/internal/file"
 	"github.com/ribeirohugo/go_content_getter/pkg/download"
 	"github.com/ribeirohugo/go_content_getter/pkg/model"
 	"github.com/ribeirohugo/go_content_getter/pkg/patterns"
@@ -52,7 +53,7 @@ func (h *HttpServer) DownloadManyHandler(c *gin.Context) {
 		return
 	}
 
-	compressedFiles, err := ZipFiles(allFiles)
+	compressedFiles, err := file.ZipFiles(allFiles)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
 		return
@@ -83,7 +84,7 @@ func (h *HttpServer) DownloadURLsHandler(c *gin.Context) {
 			Filename: filename,
 		}
 
-		file, err := download.Target(target)
+		downloadedFile, err := download.Target(target)
 		if err != nil {
 			log.Println(err.Error())
 
@@ -93,7 +94,7 @@ func (h *HttpServer) DownloadURLsHandler(c *gin.Context) {
 
 		// Only store locally if requested
 		if req.Store {
-			err = store.File(h.path, "", file)
+			err = store.File(h.path, "", downloadedFile)
 			if err != nil {
 				log.Println(err.Error())
 
@@ -101,7 +102,7 @@ func (h *HttpServer) DownloadURLsHandler(c *gin.Context) {
 				return
 			}
 		}
-		allFiles = append(allFiles, file)
+		allFiles = append(allFiles, downloadedFile)
 	}
 
 	if req.Store {
@@ -110,7 +111,7 @@ func (h *HttpServer) DownloadURLsHandler(c *gin.Context) {
 	}
 
 	// Compress files into a zip and return as binary so frontend can download it
-	compressedFiles, err := ZipFiles(allFiles)
+	compressedFiles, err := file.ZipFiles(allFiles)
 	if err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})

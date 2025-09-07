@@ -1,4 +1,4 @@
-package server
+package file
 
 import (
 	"archive/zip"
@@ -27,7 +27,8 @@ func ZipFiles(files []model.File) ([]byte, error) {
 			Name:   name,
 			Method: zip.Deflate,
 		}
-		hdr.SetModTime(time.Now())
+
+		hdr.Modified = time.Now()
 
 		w, err := zw.CreateHeader(hdr)
 		if err != nil {
