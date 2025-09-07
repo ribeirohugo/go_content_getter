@@ -1,5 +1,23 @@
 import React, { useEffect, useState } from "react";
 
+// Help component: shows a small (?) icon with hover/focus tooltip
+function Help({ text }) {
+  const lines = (text || "").split('\n');
+  return (
+    <span className="cg-help" tabIndex={0} aria-label={text}>
+      <span className="cg-help-dot">?</span>
+      <span className="cg-help-tip">
+        {lines.map((line, i) => (
+          <span key={i}>
+            {line}
+            {i < lines.length - 1 ? <br /> : null}
+          </span>
+        ))}
+      </span>
+    </span>
+  );
+}
+
 export default function DownloadContentView({ apiUrl }) {
   const API_URL = apiUrl || process.env.REACT_APP_API_URL || "/api";
   const [urls, setUrls] = useState("");
@@ -108,7 +126,7 @@ export default function DownloadContentView({ apiUrl }) {
     <div className="cg-card">
       <div className="cg-title">Download Content</div>
       <form onSubmit={handleSubmit} autoComplete="off">
-        <label className="cg-label">URLs (one per line):</label>
+        <label className="cg-label">URLs (one per line): <Help text={"Enter one page URL per line.\nEach page will be scanned using the selected patterns to extract content."} /></label>
         <textarea
           className="cg-textarea"
           rows={5}
@@ -117,7 +135,7 @@ export default function DownloadContentView({ apiUrl }) {
           placeholder={`https://example.com/page1\nhttps://example.com/page2`}
         />
 
-        <label className="cg-label">Content Pattern:</label>
+        <label className="cg-label">Content Pattern: <Help text={"Regex used to locate the main content (e.g., image src).\nChoose a preset or use Custom to enter your own regex."} /></label>
         <select
           className="cg-input"
           value={contentPatternSelect}
@@ -140,7 +158,7 @@ export default function DownloadContentView({ apiUrl }) {
           />
         )}
 
-        <label className="cg-label">Title Pattern:</label>
+        <label className="cg-label">Title Pattern: <Help text={"Regex used to extract a title or filename from the page HTML.\nUseful to name downloaded files."} /></label>
         <select
           className="cg-input"
           value={titlePatternSelect}
@@ -174,7 +192,7 @@ export default function DownloadContentView({ apiUrl }) {
             onChange={(e) => setStore(e.target.checked)}
             style={{ marginRight: '6px' }}
           />
-          Store locally?
+          Store locally? <Help text={"If checked, files will be stored on the server and returned as links.\nOtherwise they will be returned as a zip or direct response depending on server settings."} />
         </label>
       </form>
 

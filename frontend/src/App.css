@@ -208,3 +208,52 @@ html, body {
   font-weight: 500;
   letter-spacing: 0.01em;
 }
+
+/* Help tooltip styles for the small (?) button next to labels */
+.cg-help {
+  display: inline-block;
+  position: relative;
+  margin-left: 8px;
+  vertical-align: middle;
+  cursor: help;
+}
+.cg-help-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #5f6fff;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 2px 6px rgba(95,111,255,0.18);
+}
+.cg-help:focus .cg-help-dot {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(95,111,255,0.14);
+}
+.cg-help-tip {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(100% + 10px);
+  background: #23243a;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease-in-out;
+  z-index: 1200;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+}
+.cg-help:hover .cg-help-tip,
+.cg-help:focus .cg-help-tip {
+  opacity: 1;
+  pointer-events: auto;
+}
