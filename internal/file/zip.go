@@ -19,7 +19,7 @@ func ZipFiles(files []model.File) ([]byte, error) {
 	for i, f := range files {
 		// sanitize filename to avoid directory traversal
 		name := filepath.Base(f.Filename)
-		if name == "" {
+		if name == "" || name == "." {
 			name = fmt.Sprintf("file-%d", i)
 		}
 
