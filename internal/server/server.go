@@ -57,8 +57,7 @@ func (h *HttpServer) InitiateServer() error {
 	api := router.Group("/api")
 	{
 		// Download and Store
-		api.POST("/download", h.DownloadManyHandler)
-		api.POST("/download-and-store", h.DownloadAndStoreManyHandler)
+		api.POST("/download-and-store", h.DownloadManyHandler)
 		api.POST("/download-urls", h.DownloadURLsHandler)
 
 		// Patterns

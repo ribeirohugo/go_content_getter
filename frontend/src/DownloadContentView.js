@@ -14,6 +14,7 @@ export default function DownloadContentView({ apiUrl }) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
+  const [store, setStore] = useState(true);
 
   useEffect(() => {
     fetch(`${API_URL}/patterns`)
@@ -62,6 +63,7 @@ export default function DownloadContentView({ apiUrl }) {
         urls: urlList,
         contentPattern: finalContentPattern,
         titlePattern: finalTitlePattern,
+        Store: store,
       };
 
       const res = await fetch(`${API_URL}/download-and-store`, {
@@ -69,11 +71,31 @@ export default function DownloadContentView({ apiUrl }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Unknown error");
+        try {
+          const errData = await res.json();
+          setError(errData.error || "Unknown error");
+        } catch (e) {
+          setError("Server error");
+        }
       } else {
-        setResult(data.files || []);
+        const contentType = (res.headers.get("content-type") || "").toLowerCase();
+        if (contentType.includes("application/zip") || contentType.includes("application/octet-stream")) {
+          const arr = await res.arrayBuffer();
+          const blob = new Blob([arr], { type: "application/zip" });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "files.zip";
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.URL.revokeObjectURL(url);
+          setResult([]);
+        } else {
+          const data = await res.json();
+          setResult(data.files || []);
+        }
       }
     } catch (err) {
       setError("Network error");
@@ -141,9 +163,19 @@ export default function DownloadContentView({ apiUrl }) {
           />
         )}
 
+
         <button className="cg-btn" type="submit" disabled={loading}>
           {loading ? "Downloading..." : "Download"}
         </button>
+        <label style={{ display: 'block', marginTop: '8px' }}>
+          <input
+            type="checkbox"
+            checked={store}
+            onChange={(e) => setStore(e.target.checked)}
+            style={{ marginRight: '6px' }}
+          />
+          Store locally?
+        </label>
       </form>
 
       {error && <div className="cg-error">{error}</div>}
@@ -166,4 +198,3 @@ export default function DownloadContentView({ apiUrl }) {
     </div>
   );
 }
-
