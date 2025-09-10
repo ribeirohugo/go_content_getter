@@ -3,6 +3,7 @@ package youtube
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os/exec"
 )
 
@@ -23,6 +24,7 @@ func (y Youtube) GetVideoInfo(url string) (Video, error) {
 }
 
 func (y Youtube) DownloadVideo(url, videoFormat, audioFormat string) ([]byte, error) {
+	log.Printf("yt-dlp -f %s+%s %s", videoFormat, audioFormat, url)
 	cmd := exec.Command("yt-dlp",
 		"-f", videoFormat+"+"+audioFormat,
 		"-o -",

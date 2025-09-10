@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -151,4 +152,54 @@ func (h *HttpServer) GetVideoInfoHandler(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, VideoInfoResponse{Video: video})
+}
+
+// DownloadVideoHandler handles POST /api/youtube/download and returns the requested combined video+audio stream
+func (h *HttpServer) DownloadVideoHandler(c *gin.Context) {
+	var req VideoDownloadRequest
+	if err := c.ShouldBindJSON(&req); err != nil || req.URL == "" || req.VideoFormat == "" || req.AudioFormat == "" {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid or missing fields in body"})
+		return
+	}
+
+	log.Printf("Downloading video: %s\n", req.URL)
+	log.Printf("Video format %s and audio format: %s\n", req.VideoFormat, req.AudioFormat)
+
+	y := youtube.NewYoutube()
+	data, err := y.DownloadVideo(req.URL, req.VideoFormat, req.AudioFormat)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	// try to derive a friendly filename from provided title or video title
+	filename := "video.mp4"
+	if req.Title != "" {
+		title := strings.ReplaceAll(req.Title, "/", "_")
+		if title != "" {
+			filename = fmt.Sprintf("%s.mp4", title)
+		}
+	} else if v, err := y.GetVideoInfo(req.URL); err == nil && v.Title != "" {
+		title := strings.ReplaceAll(v.Title, "/", "_")
+		filename = fmt.Sprintf("%s.mp4", title)
+	}
+
+	if req.Store {
+		// store file locally
+		f := model.File{Filename: filename, Content: data}
+		if err := store.File(h.path, "", f); err != nil {
+			log.Println(err.Error())
+			c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, ContentResponse{Files: []model.File{f}})
+		return
+	}
+
+	// return binary for direct download
+	c.Header("Content-Type", "application/octet-stream")
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
+	c.Data(http.StatusOK, "application/octet-stream", data)
 }

@@ -45,3 +45,12 @@ type VideoInfoRequest struct {
 type VideoInfoResponse struct {
 	Video youtube.Video `json:"video"`
 }
+
+// VideoDownloadRequest represents the request body for downloading a youtube/video format
+type VideoDownloadRequest struct {
+	URL         string `json:"url"`
+	VideoFormat string `json:"videoFormat"`
+	AudioFormat string `json:"audioFormat"`
+	Title       string `json:"title"`
+	Store       bool   `json:"store"`
+}
