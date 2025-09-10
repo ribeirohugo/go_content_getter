@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/ribeirohugo/go_content_getter/internal/file"
+	"github.com/ribeirohugo/go_content_getter/internal/youtube"
 	"github.com/ribeirohugo/go_content_getter/pkg/download"
 	"github.com/ribeirohugo/go_content_getter/pkg/model"
 	"github.com/ribeirohugo/go_content_getter/pkg/patterns"
@@ -131,4 +132,23 @@ func (h *HttpServer) HealthHandler(c *gin.Context) {
 // LoadPatternsHandler loads existing default patterns and returns it
 func (h *HttpServer) LoadPatternsHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, patterns.PatternMap)
+}
+
+// GetVideoInfoHandler handles POST /api/youtube/info and returns youtube metadata for a URL
+func (h *HttpServer) GetVideoInfoHandler(c *gin.Context) {
+	var req VideoInfoRequest
+	if err := c.ShouldBindJSON(&req); err != nil || req.URL == "" {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid or missing url in body"})
+		return
+	}
+
+	y := youtube.NewYoutube()
+	video, err := y.GetVideoInfo(req.URL)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, VideoInfoResponse{Video: video})
 }
