@@ -123,13 +123,6 @@ export default function DownloadVideoView({ apiUrl }) {
     // no need to change formats list; we'll filter when rendering options
   }, [selectedQuality]);
 
-  // keep selectedFormat in sync when an audio format is chosen
-  React.useEffect(() => {
-    if (selectedAudioFormat) {
-      setSelectedFormat(selectedAudioFormat);
-    }
-  }, [selectedAudioFormat]);
-
   const handleFormatChange = (e) => {
     const val = e.target.value;
     setSelectedFormat(val);
@@ -156,8 +149,16 @@ export default function DownloadVideoView({ apiUrl }) {
 
     setLoading(true);
     try {
-      const payload = { urls: [fmt.url], store: store };
-      const res = await fetch(`${API_URL}/download-urls`, {
+      const payload = {
+        // use the URL entered in the form (video page), not the direct format URL
+        url: url,
+        videoFormat: selectedFormatselectedFormat || (fmt.format_id || fmt.FormatID || ''),
+        audioFormat: selectedAudioFormat || '',
+        title: video?.title || '',
+        store: store,
+      };
+
+      const res = await fetch(`${API_URL}/youtube/download`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
