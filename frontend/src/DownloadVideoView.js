@@ -104,7 +104,7 @@ export default function DownloadVideoView({ apiUrl }) {
       // derive audio-only formats (have acodec and no video codec)
       const afmts = fmts.filter((f) => f && f.acodec && f.acodec !== 'none' && (!f.vcodec || f.vcodec === 'none' || f.vcodec === ''));
       setAudioFormats(afmts);
-      setSelectedAudioFormat(afmts[0] ? (afmts[0].format_id || afmts[0].FormatID || '') : '');
+      setSelectedAudioFormat('');
     } catch (err) {
       setError("Network error");
     }
@@ -134,12 +134,12 @@ export default function DownloadVideoView({ apiUrl }) {
     setError("");
     setResult(null);
 
-    if (!selectedFormat) {
+    if (!selectedFormat && !selectedAudioFormat) {
       setError("Please select a format to download.");
       return;
     }
 
-    const fmt = formats.find((f) => f.format_id === selectedFormat || f.FormatID === selectedFormat);
+    const fmt = formats.find((f) => f.format_id === selectedFormat || f.FormatID === selectedFormat || f.format_id === selectedAudioFormat || f.FormatID === selectedAudioFormat);
     if (!fmt || !fmt.url) {
       setError("Selected format has no direct URL available.");
       return;
