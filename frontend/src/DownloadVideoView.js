@@ -255,7 +255,7 @@ export default function DownloadVideoView({ apiUrl }) {
             )}
 
             <div style={{ marginTop: 12 }}>
-              <button className="cg-btn" onClick={handleDownload} disabled={loading || !selectedFormat}>{loading ? 'Downloading...' : 'Download'}</button>
+              <button className="cg-btn" onClick={handleDownload} disabled={loading || (!selectedFormat && !selectedAudioFormat)}>{loading ? 'Downloading...' : 'Download'}</button>
             </div>
 
             <label style={{ display: 'block', marginTop: '8px' }}>
