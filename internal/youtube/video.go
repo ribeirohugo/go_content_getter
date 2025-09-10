@@ -1,6 +1,7 @@
 package youtube
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -27,14 +28,20 @@ func (y Youtube) DownloadVideo(url, videoFormat, audioFormat string) ([]byte, er
 	log.Printf("yt-dlp -f %s+%s %s", videoFormat, audioFormat, url)
 	cmd := exec.Command("yt-dlp",
 		"-f", videoFormat+"+"+audioFormat,
-		"-o -",
+		"-o", "-",
 		url,
 	)
 
-	output, err := cmd.CombinedOutput()
+	var out bytes.Buffer    // will hold the video bytes
+	var stderr bytes.Buffer // will hold yt-dlp logs
+
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+
+	err := cmd.Run()
 	if err != nil {
-		return []byte{}, fmt.Errorf("yt-dlp failed: %v", err)
+		return []byte{}, err
 	}
 
-	return output, nil
+	return out.Bytes(), nil
 }

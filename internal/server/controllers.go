@@ -198,8 +198,16 @@ func (h *HttpServer) DownloadVideoHandler(c *gin.Context) {
 		return
 	}
 
+	files := []model.File{{Filename: filename, Content: data}}
+
+	zipData, err := file.ZipFiles(files)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+	}
+
 	// return binary for direct download
 	c.Header("Content-Type", "application/octet-stream")
 	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
-	c.Data(http.StatusOK, "application/octet-stream", data)
+	c.Data(http.StatusOK, "application/octet-stream", zipData)
 }

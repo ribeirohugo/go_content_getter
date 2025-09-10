@@ -7,20 +7,18 @@ func NewYoutube() Youtube {
 }
 
 type Video struct {
-	ID           string   `json:"id"`
-	Title        string   `json:"title"`
-	Uploader     string   `json:"uploader"`
-	UploaderID   string   `json:"uploader_id"`
-	UploaderURL  string   `json:"uploader_url"`
-	UploadDate   string   `json:"upload_date"`
-	Duration     int      `json:"duration"`
-	ViewCount    int      `json:"view_count"`
-	LikeCount    int      `json:"like_count,omitempty"`
-	CommentCount int      `json:"comment_count,omitempty"`
-	Description  string   `json:"description"`
-	Categories   []string `json:"categories,omitempty"`
-	Tags         []string `json:"tags,omitempty"`
-	Formats      []Format `json:"formats"`
+	ID          string   `json:"id"`
+	Title       string   `json:"title"`
+	Uploader    string   `json:"uploader"`
+	UploaderID  string   `json:"uploader_id"`
+	UploaderURL string   `json:"uploader_url"`
+	UploadDate  string   `json:"upload_date"`
+	Duration    int      `json:"duration"`
+	ViewCount   int      `json:"view_count"`
+	Description string   `json:"description"`
+	Categories  []string `json:"categories,omitempty"`
+	Tags        []string `json:"tags,omitempty"`
+	Formats     []Format `json:"formats"`
 }
 
 type Format struct {
