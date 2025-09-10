@@ -157,13 +157,12 @@ func (h *HttpServer) GetVideoInfoHandler(c *gin.Context) {
 // DownloadVideoHandler handles POST /api/youtube/download and returns the requested combined video+audio stream
 func (h *HttpServer) DownloadVideoHandler(c *gin.Context) {
 	var req VideoDownloadRequest
-	if err := c.ShouldBindJSON(&req); err != nil || req.URL == "" || req.VideoFormat == "" || req.AudioFormat == "" {
+	if err := c.ShouldBindJSON(&req); err != nil || req.URL == "" {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid or missing fields in body"})
 		return
 	}
 
 	log.Printf("Downloading video: %s\n", req.URL)
-	log.Printf("Video format %s and audio format: %s\n", req.VideoFormat, req.AudioFormat)
 
 	y := youtube.NewYoutube()
 	data, err := y.DownloadVideo(req.URL, req.VideoFormat, req.AudioFormat)
@@ -173,7 +172,6 @@ func (h *HttpServer) DownloadVideoHandler(c *gin.Context) {
 		return
 	}
 
-	// try to derive a friendly filename from provided title or video title
 	filename := "video.mp4"
 	if req.Title != "" {
 		title := strings.ReplaceAll(req.Title, "/", "_")
