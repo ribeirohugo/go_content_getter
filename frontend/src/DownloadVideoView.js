@@ -55,7 +55,7 @@ export default function DownloadVideoView({ apiUrl }) {
     setSelectedQuality("");
 
     if (!url) {
-      setError("Por favor insira uma URL.");
+      setError("Please enter a URL.");
       return;
     }
 
@@ -69,9 +69,9 @@ export default function DownloadVideoView({ apiUrl }) {
       if (!res.ok) {
         try {
           const d = await res.json();
-          setError(d.error || "Erro ao obter informações do vídeo");
+          setError(d.error || "Error fetching video info");
         } catch (e) {
-          setError("Erro do servidor");
+          setError("Server error");
         }
         setLoading(false);
         return;
@@ -99,7 +99,7 @@ export default function DownloadVideoView({ apiUrl }) {
       setQualities(qarr);
       setSelectedQuality(qarr[0] || "");
     } catch (err) {
-      setError("Erro de rede");
+      setError("Network error");
     }
     setLoading(false);
   };
@@ -122,13 +122,13 @@ export default function DownloadVideoView({ apiUrl }) {
     setResult(null);
 
     if (!selectedFormat) {
-      setError("Selecione um formato para download.");
+      setError("Please select a format to download.");
       return;
     }
 
     const fmt = formats.find((f) => f.format_id === selectedFormat || f.FormatID === selectedFormat);
     if (!fmt || !fmt.url) {
-      setError("Formato selecionado sem URL direto disponível.");
+      setError("Selected format has no direct URL available.");
       return;
     }
 
@@ -144,9 +144,9 @@ export default function DownloadVideoView({ apiUrl }) {
       if (!res.ok) {
         try {
           const d = await res.json();
-          setError(d.error || "Erro ao baixar o formato");
+          setError(d.error || "Error downloading the format");
         } catch (e) {
-          setError("Erro do servidor");
+          setError("Server error");
         }
       } else {
         const contentType = (res.headers.get("content-type") || "").toLowerCase();
@@ -168,7 +168,7 @@ export default function DownloadVideoView({ apiUrl }) {
         }
       }
     } catch (err) {
-      setError("Erro de rede");
+      setError("Network error");
     }
 
     setLoading(false);
@@ -186,7 +186,7 @@ export default function DownloadVideoView({ apiUrl }) {
     <div className="cg-card">
       <div className="cg-title">Download YouTube / Video</div>
       <form onSubmit={(e) => { e.preventDefault(); }} autoComplete="off">
-        <label className="cg-label">Video URL: <Help text={"Cole a URL do vídeo (YouTube ou similar) e pressione 'Get info' para listar formatos disponíveis."} /></label>
+        <label className="cg-label">Video URL: <Help text={"Paste the video URL (YouTube or similar) and press 'Get info' to list available formats."} /></label>
         <input
           className="cg-input"
           type="text"
@@ -195,7 +195,7 @@ export default function DownloadVideoView({ apiUrl }) {
           placeholder="https://www.youtube.com/watch?v=..."
         />
         <div style={{ marginTop: 8 }}>
-          <button className="cg-btn" onClick={fetchInfo} disabled={loading}>{loading ? 'Carregando...' : 'Get info'}</button>
+          <button className="cg-btn" onClick={fetchInfo} disabled={loading}>{loading ? 'Loading...' : 'Get info'}</button>
         </div>
 
         {video && (
@@ -230,7 +230,7 @@ export default function DownloadVideoView({ apiUrl }) {
                 onChange={(e) => setStore(e.target.checked)}
                 style={{ marginRight: '6px' }}
               />
-              Store locally? <Help text={"Se marcado, o servidor armazenará o arquivo e retornará links. Caso contrário será feito download direto."} />
+              Store locally? <Help text={"If checked, the server will store the file and return links. Otherwise a direct download will be performed."} />
             </label>
 
           </div>
@@ -258,4 +258,3 @@ export default function DownloadVideoView({ apiUrl }) {
     </div>
   );
 }
-
