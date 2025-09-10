@@ -44,7 +44,7 @@ export default function DownloadVideoView({ apiUrl }) {
   const [audioFormats, setAudioFormats] = useState([]);
   const [selectedAudioFormat, setSelectedAudioFormat] = useState("");
   const [result, setResult] = useState(null);
-  const [store, setStore] = useState(false);
+  const [store, setStore] = useState(true);
 
   const fetchInfo = async (e) => {
     e && e.preventDefault();
@@ -125,10 +125,8 @@ export default function DownloadVideoView({ apiUrl }) {
 
   const handleFormatChange = (e) => {
     const val = e.target.value;
+    // only update the selected video format here; keep audio selection independent
     setSelectedFormat(val);
-    // if chosen format is one of audioFormats, set selectedAudioFormat, otherwise clear it
-    const isAudio = audioFormats.find((af) => (af.format_id === val || af.FormatID === val));
-    setSelectedAudioFormat(isAudio ? val : '');
   };
 
   const handleDownload = async (e) => {
@@ -152,7 +150,7 @@ export default function DownloadVideoView({ apiUrl }) {
       const payload = {
         // use the URL entered in the form (video page), not the direct format URL
         url: url,
-        videoFormat: selectedFormatselectedFormat || (fmt.format_id || fmt.FormatID || ''),
+        videoFormat: selectedFormat || (fmt.format_id || fmt.FormatID || ''),
         audioFormat: selectedAudioFormat || '',
         title: video?.title || '',
         store: store,
