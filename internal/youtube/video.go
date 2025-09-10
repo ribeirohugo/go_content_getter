@@ -25,8 +25,6 @@ func (y Youtube) GetVideoInfo(url string) (Video, error) {
 }
 
 func (y Youtube) DownloadVideo(url, videoFormat, audioFormat string) ([]byte, error) {
-	log.Printf("yt-dlp -f %s+%s -o - %s", videoFormat, audioFormat, url)
-
 	format := fmt.Sprintf("%s+%s", videoFormat, audioFormat)
 	if videoFormat == "" {
 		format = audioFormat
@@ -34,6 +32,8 @@ func (y Youtube) DownloadVideo(url, videoFormat, audioFormat string) ([]byte, er
 	if audioFormat == "" {
 		format = videoFormat
 	}
+
+	log.Printf("yt-dlp -f %s -o - %s", format, url)
 
 	cmd := exec.Command("yt-dlp",
 		"-f", format,
