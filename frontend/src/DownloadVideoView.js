@@ -41,6 +41,8 @@ export default function DownloadVideoView({ apiUrl }) {
   const [selectedQuality, setSelectedQuality] = useState("");
   const [formats, setFormats] = useState([]);
   const [selectedFormat, setSelectedFormat] = useState("");
+  const [audioFormats, setAudioFormats] = useState([]);
+  const [selectedAudioFormat, setSelectedAudioFormat] = useState("");
   const [result, setResult] = useState(null);
   const [store, setStore] = useState(false);
 
@@ -98,6 +100,11 @@ export default function DownloadVideoView({ apiUrl }) {
       });
       setQualities(qarr);
       setSelectedQuality(qarr[0] || "");
+
+      // derive audio-only formats (have acodec and no video codec)
+      const afmts = fmts.filter((f) => f && f.acodec && f.acodec !== 'none' && (!f.vcodec || f.vcodec === 'none' || f.vcodec === ''));
+      setAudioFormats(afmts);
+      setSelectedAudioFormat(afmts[0] ? (afmts[0].format_id || afmts[0].FormatID || '') : '');
     } catch (err) {
       setError("Network error");
     }
@@ -115,6 +122,21 @@ export default function DownloadVideoView({ apiUrl }) {
     setSelectedFormat("");
     // no need to change formats list; we'll filter when rendering options
   }, [selectedQuality]);
+
+  // keep selectedFormat in sync when an audio format is chosen
+  React.useEffect(() => {
+    if (selectedAudioFormat) {
+      setSelectedFormat(selectedAudioFormat);
+    }
+  }, [selectedAudioFormat]);
+
+  const handleFormatChange = (e) => {
+    const val = e.target.value;
+    setSelectedFormat(val);
+    // if chosen format is one of audioFormats, set selectedAudioFormat, otherwise clear it
+    const isAudio = audioFormats.find((af) => (af.format_id === val || af.FormatID === val));
+    setSelectedAudioFormat(isAudio ? val : '');
+  };
 
   const handleDownload = async (e) => {
     e && e.preventDefault();
@@ -209,8 +231,8 @@ export default function DownloadVideoView({ apiUrl }) {
               ))}
             </select>
 
-            <label className="cg-label" style={{ marginTop: 8 }}>Format</label>
-            <select className="cg-input" value={selectedFormat} onChange={(e) => setSelectedFormat(e.target.value)}>
+            <label className="cg-label" style={{ marginTop: 8 }}>Video Format</label>
+            <select className="cg-input" value={selectedFormat} onChange={handleFormatChange}>
               <option value="">-- select --</option>
               {filteredFormats.map((f, i) => (
                 <option key={i} value={f.format_id || f.FormatID || i}>
@@ -218,6 +240,20 @@ export default function DownloadVideoView({ apiUrl }) {
                 </option>
               ))}
             </select>
+
+            {audioFormats && audioFormats.length > 0 && (
+              <>
+                <label className="cg-label" style={{ marginTop: 8 }}>Audio format</label>
+                <select className="cg-input" value={selectedAudioFormat} onChange={(e) => setSelectedAudioFormat(e.target.value)}>
+                  <option value="">-- select audio --</option>
+                  {audioFormats.map((f, i) => (
+                    <option key={i} value={f.format_id || f.FormatID || i}>
+                      {`${f.ext || f.Ext || ''} ${f.acodec ? '(' + f.acodec + ')' : ''} ${humanFileSize(f.filesize)}`}
+                    </option>
+                  ))}
+                </select>
+              </>
+            )}
 
             <div style={{ marginTop: 12 }}>
               <button className="cg-btn" onClick={handleDownload} disabled={loading || !selectedFormat}>{loading ? 'Downloading...' : 'Download'}</button>
