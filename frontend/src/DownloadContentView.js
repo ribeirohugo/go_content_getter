@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Help from "./Help";
+import { fetchPatterns, downloadAndStore } from "./api";
 
-export default function DownloadContentView({ apiUrl }) {
-  const API_URL = apiUrl || process.env.REACT_APP_API_URL || "/api";
+export default function DownloadContentView() {
   const [urls, setUrls] = useState("");
   const [patterns, setPatterns] = useState([]);
 
@@ -18,8 +18,7 @@ export default function DownloadContentView({ apiUrl }) {
   const [store, setStore] = useState(true);
 
   useEffect(() => {
-    fetch(`${API_URL}/patterns`)
-      .then((res) => res.json())
+    fetchPatterns()
       .then((data) => {
         setPatterns(Array.isArray(data) ? data : []);
         if (Array.isArray(data) && data.length > 0) {
@@ -38,7 +37,7 @@ export default function DownloadContentView({ apiUrl }) {
         }
       })
       .catch(() => {});
-  }, [API_URL]);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,11 +66,7 @@ export default function DownloadContentView({ apiUrl }) {
         Store: store,
       };
 
-      const res = await fetch(`${API_URL}/download-and-store`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const res = await downloadAndStore(payload);
       if (!res.ok) {
         try {
           const errData = await res.json();

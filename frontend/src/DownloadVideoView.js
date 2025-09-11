@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Help from "./Help";
+import { fetchVideoInfo, downloadVideoAlt } from "./api";
 
 function humanFileSize(bytes) {
   if (!bytes || bytes === 0) return "-";
@@ -14,8 +15,7 @@ function humanFileSize(bytes) {
   return bytes.toFixed(1) + " " + units[u];
 }
 
-export default function DownloadVideoView({ apiUrl }) {
-  const API_URL = apiUrl || process.env.REACT_APP_API_URL || "/api";
+export default function DownloadVideoView() {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -46,11 +46,7 @@ export default function DownloadVideoView({ apiUrl }) {
 
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/video/info`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url }),
-      });
+      const res = await fetchVideoInfo({ url });
       if (!res.ok) {
         try {
           const d = await res.json();
@@ -139,11 +135,7 @@ export default function DownloadVideoView({ apiUrl }) {
         store: store,
       };
 
-      const res = await fetch(`${API_URL}/video/download`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const res = await downloadVideoAlt(payload);
 
       if (!res.ok) {
         try {

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Help from "./Help";
+import { downloadURLsPost } from "./api";
 
-export default function DownloadURLsView({ apiUrl }) {
+export default function DownloadURLsView() {
   const [urls, setUrls] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -26,11 +27,7 @@ export default function DownloadURLsView({ apiUrl }) {
 
     try {
       const payload = { urls: urlList, Store: store };
-      const res = await fetch(`${apiUrl}/download-urls`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const res = await downloadURLsPost(payload);
 
       if (!res.ok) {
         // try parse json error
