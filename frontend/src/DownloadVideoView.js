@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Help from "./Help";
-import { fetchVideoInfo, downloadVideoAlt } from "./api";
+import { fetchVideoInfo, downloadVideo } from "./api";
 
 function humanFileSize(bytes) {
   if (!bytes || bytes === 0) return "-";
@@ -135,7 +135,7 @@ export default function DownloadVideoView() {
         store: store,
       };
 
-      const res = await downloadVideoAlt(payload);
+      const res = await downloadVideo(payload);
 
       if (!res.ok) {
         try {
