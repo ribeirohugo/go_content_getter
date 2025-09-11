@@ -1,22 +1,5 @@
 import React, { useEffect, useState } from "react";
-
-// Help component: shows a small (?) icon with hover/focus tooltip
-function Help({ text }) {
-  const lines = (text || "").split('\n');
-  return (
-    <span className="cg-help" tabIndex={0} aria-label={text}>
-      <span className="cg-help-dot">?</span>
-      <span className="cg-help-tip">
-        {lines.map((line, i) => (
-          <span key={i}>
-            {line}
-            {i < lines.length - 1 ? <br /> : null}
-          </span>
-        ))}
-      </span>
-    </span>
-  );
-}
+import Help from "./Help";
 
 export default function DownloadContentView({ apiUrl }) {
   const API_URL = apiUrl || process.env.REACT_APP_API_URL || "/api";

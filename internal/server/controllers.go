@@ -135,7 +135,7 @@ func (h *HttpServer) LoadPatternsHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, patterns.PatternMap)
 }
 
-// GetVideoInfoHandler handles POST /api/youtube/info and returns youtube metadata for a URL
+// GetVideoInfoHandler returns video metadata for a given URL.
 func (h *HttpServer) GetVideoInfoHandler(c *gin.Context) {
 	var req VideoInfoRequest
 	if err := c.ShouldBindJSON(&req); err != nil || req.URL == "" {
@@ -144,17 +144,17 @@ func (h *HttpServer) GetVideoInfoHandler(c *gin.Context) {
 	}
 
 	y := video.NewYoutube()
-	video, err := y.GetVideoInfo(req.URL)
+	videoInfo, err := y.GetVideoInfo(req.URL)
 	if err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, VideoInfoResponse{Video: video})
+	c.JSON(http.StatusOK, VideoInfoResponse{Video: videoInfo})
 }
 
-// DownloadVideoHandler handles POST /api/youtube/download and returns the requested combined video+audio stream
+// DownloadVideoHandler allows to download video or audio.
 func (h *HttpServer) DownloadVideoHandler(c *gin.Context) {
 	var req VideoDownloadRequest
 	if err := c.ShouldBindJSON(&req); err != nil || req.URL == "" {
