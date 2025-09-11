@@ -93,3 +93,9 @@ To run this application execute the following command:
 ``npm start``
 
 For more information, please refer to the [frontend/README.md](frontend/README.md) file.
+
+## 6. Video
+
+Video feature allows to download video content from a specified URL.
+
+To use video content getter feature, you need to have `ffmpeg` and `yd-dlp` installed on your system.

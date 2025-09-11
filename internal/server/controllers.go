@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -14,6 +15,7 @@ import (
 	"github.com/ribeirohugo/go_content_getter/pkg/source"
 	"github.com/ribeirohugo/go_content_getter/pkg/store"
 	urlUtils "github.com/ribeirohugo/go_content_getter/pkg/url"
+	"github.com/ribeirohugo/go_content_getter/pkg/video"
 )
 
 // DownloadManyHandler handles POST /api/download requests
@@ -131,4 +133,77 @@ func (h *HttpServer) HealthHandler(c *gin.Context) {
 // LoadPatternsHandler loads existing default patterns and returns it
 func (h *HttpServer) LoadPatternsHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, patterns.PatternMap)
+}
+
+// GetVideoInfoHandler handles POST /api/youtube/info and returns youtube metadata for a URL
+func (h *HttpServer) GetVideoInfoHandler(c *gin.Context) {
+	var req VideoInfoRequest
+	if err := c.ShouldBindJSON(&req); err != nil || req.URL == "" {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid or missing url in body"})
+		return
+	}
+
+	y := video.NewYoutube()
+	video, err := y.GetVideoInfo(req.URL)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, VideoInfoResponse{Video: video})
+}
+
+// DownloadVideoHandler handles POST /api/youtube/download and returns the requested combined video+audio stream
+func (h *HttpServer) DownloadVideoHandler(c *gin.Context) {
+	var req VideoDownloadRequest
+	if err := c.ShouldBindJSON(&req); err != nil || req.URL == "" {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid or missing fields in body"})
+		return
+	}
+
+	y := video.NewYoutube()
+	data, err := y.DownloadVideo(req.URL, req.VideoFormat, req.AudioFormat)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	filename := "video.mp4"
+	if req.Title != "" {
+		title := strings.ReplaceAll(req.Title, "/", "_")
+		if title != "" {
+			filename = fmt.Sprintf("%s.mp4", title)
+		}
+	} else if v, err := y.GetVideoInfo(req.URL); err == nil && v.Title != "" {
+		title := strings.ReplaceAll(v.Title, "/", "_")
+		filename = fmt.Sprintf("%s.mp4", title)
+	}
+
+	if req.Store {
+		// store file locally
+		f := model.File{Filename: filename, Content: data}
+		if err := store.File(h.path, "", f); err != nil {
+			log.Println(err.Error())
+			c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, ContentResponse{Files: []model.File{f}})
+		return
+	}
+
+	files := []model.File{{Filename: filename, Content: data}}
+
+	zipData, err := file.ZipFiles(files)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+	}
+
+	// return binary for direct download
+	c.Header("Content-Type", "application/octet-stream")
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
+	c.Data(http.StatusOK, "application/octet-stream", zipData)
 }
