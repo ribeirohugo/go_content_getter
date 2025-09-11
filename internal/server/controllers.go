@@ -9,13 +9,13 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/ribeirohugo/go_content_getter/internal/file"
-	"github.com/ribeirohugo/go_content_getter/internal/youtube"
 	"github.com/ribeirohugo/go_content_getter/pkg/download"
 	"github.com/ribeirohugo/go_content_getter/pkg/model"
 	"github.com/ribeirohugo/go_content_getter/pkg/patterns"
 	"github.com/ribeirohugo/go_content_getter/pkg/source"
 	"github.com/ribeirohugo/go_content_getter/pkg/store"
 	urlUtils "github.com/ribeirohugo/go_content_getter/pkg/url"
+	"github.com/ribeirohugo/go_content_getter/pkg/video"
 )
 
 // DownloadManyHandler handles POST /api/download requests
@@ -143,7 +143,7 @@ func (h *HttpServer) GetVideoInfoHandler(c *gin.Context) {
 		return
 	}
 
-	y := youtube.NewYoutube()
+	y := video.NewYoutube()
 	video, err := y.GetVideoInfo(req.URL)
 	if err != nil {
 		log.Println(err.Error())
@@ -162,9 +162,7 @@ func (h *HttpServer) DownloadVideoHandler(c *gin.Context) {
 		return
 	}
 
-	log.Printf("Downloading video: %s\n", req.URL)
-
-	y := youtube.NewYoutube()
+	y := video.NewYoutube()
 	data, err := y.DownloadVideo(req.URL, req.VideoFormat, req.AudioFormat)
 	if err != nil {
 		log.Println(err.Error())

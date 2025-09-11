@@ -1,8 +1,8 @@
 package server
 
 import (
-	"github.com/ribeirohugo/go_content_getter/internal/youtube"
 	"github.com/ribeirohugo/go_content_getter/pkg/model"
+	"github.com/ribeirohugo/go_content_getter/pkg/video"
 )
 
 // ErrorResponse represents a standard error response
@@ -43,7 +43,7 @@ type VideoInfoRequest struct {
 
 // VideoInfoResponse represents the response containing youtube video metadata
 type VideoInfoResponse struct {
-	Video youtube.Video `json:"video"`
+	Video video.Video `json:"video"`
 }
 
 // VideoDownloadRequest represents the request body for downloading a youtube/video format

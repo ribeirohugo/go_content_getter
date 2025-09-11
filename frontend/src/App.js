@@ -102,7 +102,7 @@ function App() {
           <div className={`cg-navbar-links ${navOpen ? 'open' : ''}`}>
             <a href="#" className="cg-navbar-link" onClick={(e)=>{e.preventDefault(); setView('content'); setNavOpen(false);}}>Content</a>
             <a href="#" className="cg-navbar-link" onClick={(e)=>{e.preventDefault(); setView('download-urls'); setNavOpen(false);}}>URLs</a>
-            <a href="#" className="cg-navbar-link" onClick={(e)=>{e.preventDefault(); setView('youtube'); setNavOpen(false);}}>YouTube</a>
+            <a href="#" className="cg-navbar-link" onClick={(e)=>{e.preventDefault(); setView('video'); setNavOpen(false);}}>Video</a>
           </div>
 
           <button className="cg-trigram" aria-label="Menu" onClick={() => setNavOpen(!navOpen)}>
@@ -117,7 +117,7 @@ function App() {
       <div className="cg-content">
         {view === 'download-urls' ? (
           <DownloadURLsView apiUrl={API_URL} />
-        ) : view === 'youtube' ? (
+        ) : view === 'video' ? (
           <DownloadVideoView apiUrl={API_URL} />
         ) : (
           <DownloadContentView apiUrl={API_URL} />

@@ -63,7 +63,7 @@ export default function DownloadVideoView({ apiUrl }) {
 
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/youtube/info`, {
+      const res = await fetch(`${API_URL}/video/info`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url }),
@@ -156,7 +156,7 @@ export default function DownloadVideoView({ apiUrl }) {
         store: store,
       };
 
-      const res = await fetch(`${API_URL}/youtube/download`, {
+      const res = await fetch(`${API_URL}/video/download`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -205,7 +205,7 @@ export default function DownloadVideoView({ apiUrl }) {
 
   return (
     <div className="cg-card">
-      <div className="cg-title">Download YouTube / Video</div>
+      <div className="cg-title">Download Video</div>
       <form onSubmit={(e) => { e.preventDefault(); }} autoComplete="off">
         <label className="cg-label">Video URL: <Help text={"Paste the video URL (YouTube or similar) and press 'Get info' to list available formats."} /></label>
         <input

@@ -1,9 +1,29 @@
-package youtube
+package video
+
+import (
+	"log"
+	"os/exec"
+)
 
 type Youtube struct{}
 
 func NewYoutube() Youtube {
+	dependencies := []string{"ffmpeg", "yt-dlp"}
+
+	for _, dep := range dependencies {
+		if checkDependency(dep) {
+			log.Printf("%s is installed ✅\n", dep)
+		} else {
+			log.Printf("%s is NOT installed ❌\n", dep)
+		}
+	}
+
 	return Youtube{}
+}
+
+func checkDependency(name string) bool {
+	_, err := exec.LookPath(name)
+	return err == nil
 }
 
 type Video struct {
