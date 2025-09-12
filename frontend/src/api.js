@@ -5,10 +5,9 @@ export const ENDPOINTS = {
   PATTERNS: `${API_BASE_URL}/patterns`,
   DOWNLOAD_AND_STORE: `${API_BASE_URL}/download-and-store`,
   DOWNLOAD_URLS: `${API_BASE_URL}/download-urls`,
-  VIDEO_INFO: `${API_BASE_URL}/video/info`,
+  YOUTUBE_INFO: `${API_BASE_URL}/youtube/info`,
+  YOUTUBE_DOWNLOAD: `${API_BASE_URL}/youtube/download`,
   VIDEO_DOWNLOAD: `${API_BASE_URL}/video/download`,
-  DOWNLOAD_VIDEO: `${API_BASE_URL}/download-video`,
-  HELP: `${API_BASE_URL}/help`,
 };
 
 export async function fetchPatterns() {
@@ -32,33 +31,26 @@ export async function downloadURLsPost(payload) {
   });
 }
 
-export async function fetchVideoInfo(payload) {
-  return fetch(ENDPOINTS.VIDEO_INFO, {
+export async function fetchYoutubeInfo(payload) {
+  return fetch(ENDPOINTS.YOUTUBE_INFO, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 }
 
-// Keep both names to match different views
-export async function downloadVideoPost(payload) {
-  return fetch(ENDPOINTS.DOWNLOAD_VIDEO, {
+export async function downloadYoutube(payload) {
+  return fetch(ENDPOINTS.YOUTUBE_DOWNLOAD, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 }
 
-export async function downloadVideoAlt(payload) {
-  // alternative endpoint some servers use
+export async function downloadVideo(payload) {
   return fetch(ENDPOINTS.VIDEO_DOWNLOAD, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-}
-
-export async function getHelp() {
-  const res = await fetch(ENDPOINTS.HELP);
-  return res.json();
 }

@@ -5,9 +5,9 @@ import (
 	"os/exec"
 )
 
-type Youtube struct{}
+type Getter struct{}
 
-func NewYoutube() Youtube {
+func NewGetter() Getter {
 	dependencies := []string{"ffmpeg", "yt-dlp"}
 
 	for _, dep := range dependencies {
@@ -18,7 +18,7 @@ func NewYoutube() Youtube {
 		}
 	}
 
-	return Youtube{}
+	return Getter{}
 }
 
 func checkDependency(name string) bool {

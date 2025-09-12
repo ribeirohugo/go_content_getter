@@ -1,265 +1,157 @@
-import React, { useState } from "react";
-import Help from "./Help";
-import { fetchVideoInfo, downloadVideoAlt } from "./api";
+import React, { useState, useEffect } from 'react';
+import Help from './Help';
+import { downloadVideo } from './api';
 
-function humanFileSize(bytes) {
-  if (!bytes || bytes === 0) return "-";
-  const thresh = 1024;
-  if (Math.abs(bytes) < thresh) return bytes + " B";
-  const units = ["KB", "MB", "GB", "TB"];
-  let u = -1;
-  do {
-    bytes /= thresh;
-    ++u;
-  } while (Math.abs(bytes) >= thresh && u < units.length - 1);
-  return bytes.toFixed(1) + " " + units[u];
-}
+// Video qualities list
+const VIDEO_QUALITIES = ['144p','240p','360p','480p','720p','1080p','1440p','2160p'];
+// Audio bitrates (kbps)
+const AUDIO_BITRATES = ['64','96','128','160','192','256','320'];
 
 export default function DownloadVideoView() {
-  const [url, setUrl] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [video, setVideo] = useState(null);
-  const [qualities, setQualities] = useState([]);
-  const [selectedQuality, setSelectedQuality] = useState("");
-  const [formats, setFormats] = useState([]);
-  const [selectedFormat, setSelectedFormat] = useState("");
-  const [audioFormats, setAudioFormats] = useState([]);
-  const [selectedAudioFormat, setSelectedAudioFormat] = useState("");
-  const [result, setResult] = useState(null);
-  const [store, setStore] = useState(true);
+  const [urls, setUrls] = useState('');
+  const [format, setFormat] = useState('mp4');
+  const [videoQuality, setVideoQuality] = useState(''); // empty = auto
+  const [audioQuality, setAudioQuality] = useState(''); // empty = auto
+  const [store, setStore] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [error, setError] = useState('');
+  const [logs, setLogs] = useState([]);
+  const [storedFiles, setStoredFiles] = useState([]);
 
-  const fetchInfo = async (e) => {
-    e && e.preventDefault();
-    setError("");
-    setResult(null);
-    setVideo(null);
-    setFormats([]);
-    setQualities([]);
-    setSelectedFormat("");
-    setSelectedQuality("");
-
-    if (!url) {
-      setError("Please enter a URL.");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const res = await fetchVideoInfo({ url });
-      if (!res.ok) {
-        try {
-          const d = await res.json();
-          setError(d.error || "Error fetching video info");
-        } catch (e) {
-          setError("Server error");
-        }
-        setLoading(false);
-        return;
-      }
-      const data = await res.json();
-      const v = data.video;
-      setVideo(v || null);
-      const fmts = Array.isArray(v?.formats) ? v.formats : [];
-      setFormats(fmts);
-
-      // derive qualities (unique heights) and include audio option
-      const qset = new Set();
-      fmts.forEach((f) => {
-        if (!f || (f.height === 0 || !f.height) && f.acodec && !f.vcodec) {
-          qset.add("audio");
-        } else if (f.height) {
-          qset.add(String(f.height));
-        }
-      });
-      const qarr = Array.from(qset).sort((a, b) => {
-        if (a === "audio") return 1;
-        if (b === "audio") return -1;
-        return Number(b) - Number(a);
-      });
-      setQualities(qarr);
-      setSelectedQuality(qarr[0] || "");
-
-      // derive audio-only formats (have acodec and no video codec)
-      const afmts = fmts.filter((f) => f && f.acodec && f.acodec !== 'none' && (!f.vcodec || f.vcodec === 'none' || f.vcodec === ''));
-      setAudioFormats(afmts);
-      setSelectedAudioFormat('');
-    } catch (err) {
-      setError("Network error");
-    }
-    setLoading(false);
-  };
-
-  // when quality changes, pick formats
-  React.useEffect(() => {
-    if (!selectedQuality) {
-      setSelectedFormat("");
-      setFormats((f) => f);
-      return;
-    }
-    // formats already loaded in state; filter them
-    setSelectedFormat("");
-    // no need to change formats list; we'll filter when rendering options
-  }, [selectedQuality]);
-
-  const handleFormatChange = (e) => {
-    const val = e.target.value;
-    // only update the selected video format here; keep audio selection independent
-    setSelectedFormat(val);
-  };
+  const appendLog = (m) => setLogs(l => [...l, m]);
 
   const handleDownload = async (e) => {
     e && e.preventDefault();
-    setError("");
-    setResult(null);
+    setError('');
+    setLogs([]);
+    setStoredFiles([]);
 
-    if (!selectedFormat && !selectedAudioFormat) {
-      setError("Please select a format to download.");
-      return;
-    }
+    const list = urls.split('\n').map(x=>x.trim()).filter(Boolean);
+    if (!list.length) { setError('Enter at least one URL.'); return; }
 
-    const fmt = formats.find((f) => f.format_id === selectedFormat || f.FormatID === selectedFormat || f.format_id === selectedAudioFormat || f.FormatID === selectedAudioFormat);
-    if (!fmt || !fmt.url) {
-      setError("Selected format has no direct URL available.");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const payload = {
-        // use the URL entered in the form (video page), not the direct format URL
-        url: url,
-        videoFormat: selectedFormat || (fmt.format_id || fmt.FormatID || ''),
-        audioFormat: selectedAudioFormat || '',
-        title: video?.title || '',
-        store: store,
-      };
-
-      const res = await downloadVideoAlt(payload);
-
-      if (!res.ok) {
-        try {
-          const d = await res.json();
-          setError(d.error || "Error downloading the format");
-        } catch (e) {
-          setError("Server error");
+    setDownloading(true);
+    for (const u of list) {
+      appendLog(`Processing: ${u}`);
+      try {
+        const payload = {
+          urls: [u],
+          videoQuality: (format === 'mp4' && videoQuality) ? videoQuality.replace('p','') : '',
+          audioQuality: audioQuality,
+          format: format,
+          store: store,
+        };
+        const res = await downloadVideo(payload);
+        if (!res.ok) {
+          let msg = 'Download error';
+          try { const d = await res.json(); msg = d.error || msg; } catch(_){}
+          appendLog(`Error: ${msg}`); continue;
         }
-      } else {
-        const contentType = (res.headers.get("content-type") || "").toLowerCase();
-        if (contentType.includes("application/zip") || contentType.includes("application/octet-stream")) {
-          const arr = await res.arrayBuffer();
-          const blob = new Blob([arr], { type: "application/zip" });
-          const urlBlob = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = urlBlob;
-          a.download = `${video?.title || 'video'}.zip`;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          window.URL.revokeObjectURL(urlBlob);
-          setResult([]);
+        if (store) {
+          try {
+            const data = await res.json();
+            const files = data.files || data.Files || [];
+            setStoredFiles(prev => [...prev, ...files]);
+            appendLog(`Stored (${files.length || 1})`);
+          } catch(err){ appendLog('Failed to parse JSON response'); }
         } else {
-          const d = await res.json();
-          setResult(d.files || []);
+          const blob = await res.blob();
+          const ext = format === 'mp3' ? 'mp3' : 'mp4';
+          const fname = `video_${Date.now()}_${Math.random().toString(36).slice(2)}.${ext}`;
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob); a.download = fname; document.body.appendChild(a); a.click(); a.remove();
+          appendLog('Download finished');
         }
+      } catch(err) {
+        appendLog(`Failed (${u}): ${err.message}`);
       }
-    } catch (err) {
-      setError("Network error");
     }
-
-    setLoading(false);
+    setDownloading(false);
   };
 
-  const filteredFormats = formats.filter((f) => {
-    if (!selectedQuality) return true;
-    if (selectedQuality === "audio") {
-      return (!f.height || f.height === 0) && f.acodec && (!f.vcodec || f.vcodec === "none");
+  useEffect(() => {
+    if (format === 'mp3' && videoQuality) {
+      setVideoQuality('');
     }
-    return String(f.height) === String(selectedQuality);
-  });
+  }, [format, videoQuality]);
 
   return (
     <div className="cg-card">
-      <div className="cg-title">Download Video</div>
-      <form onSubmit={(e) => { e.preventDefault(); }} autoComplete="off">
-        <label className="cg-label">Video URL: <Help text={"Paste the video URL (YouTube or similar) and press 'Get info' to list available formats."} /></label>
-        <input
-          className="cg-input"
-          type="text"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder="https://www.youtube.com/watch?v=..."
-        />
-        <div style={{ marginTop: 8 }}>
-          <button className="cg-btn" onClick={fetchInfo} disabled={loading}>{loading ? 'Loading...' : 'Get info'}</button>
+      <div className="cg-title">Video / Audio Download</div>
+      <form onSubmit={handleDownload} autoComplete="off">
+        <label className="cg-label">URLs (one per line): <Help text={'Paste video page URLs supported by yt-dlp. Each line is processed sequentially.'} /></label>
+        <textarea className="cg-textarea" name="urls" rows={6} value={urls} onChange={(e)=>setUrls(e.target.value)} placeholder={`https://www.youtube.com/watch?v=...\nhttps://vimeo.com/...`} />
+
+        <label className="cg-label" style={{marginTop:8}}>Format</label>
+        {/* Format as toggle buttons */}
+        <div style={{display:'flex', gap:'8px', marginBottom:'4px'}}>
+          <button
+            type="button"
+            onClick={()=>setFormat('mp4')}
+            className="cg-btn"
+            style={{
+              background: format==='mp4'? '#2563eb' : '#444',
+              border: 'none',
+              padding: '6px 14px'
+            }}
+          >mp4</button>
+          <button
+            type="button"
+            onClick={()=>setFormat('mp3')}
+            className="cg-btn"
+            style={{
+              background: format==='mp3'? '#2563eb' : '#444',
+              border: 'none',
+              padding: '6px 14px'
+            }}
+          >mp3</button>
         </div>
+        {/* Hidden field for potential form compatibility */}
+        <input type="hidden" value={format} readOnly />
 
-        {video && (
-          <div style={{ marginTop: 12 }}>
-            <div><strong>{video.title}</strong> — {video.uploader}</div>
-
-            <label className="cg-label" style={{ marginTop: 8 }}>Quality</label>
-            <select className="cg-input" value={selectedQuality} onChange={(e) => setSelectedQuality(e.target.value)}>
-              {qualities.map((q, i) => (
-                <option key={i} value={q}>{q === 'audio' ? 'Audio only' : q + 'p'}</option>
-              ))}
+        {format === 'mp4' && (
+          <>
+            <label className="cg-label" style={{marginTop:8}}>Video quality (optional)</label>
+            <select className="cg-input" value={videoQuality} onChange={(e)=>setVideoQuality(e.target.value)}>
+              <option value="">(auto)</option>
+              {VIDEO_QUALITIES.map(q=> <option key={q} value={q}>{q}</option>)}
             </select>
-
-            <label className="cg-label" style={{ marginTop: 8 }}>Video Format</label>
-            <select className="cg-input" value={selectedFormat} onChange={handleFormatChange}>
-              <option value="">-- select --</option>
-              {filteredFormats.map((f, i) => (
-                <option key={i} value={f.format_id || f.FormatID || i}>
-                  {`${f.ext || f.Ext || ''} ${f.height ? f.height + 'p' : ''} ${f.vcodec ? f.vcodec : ''} ${f.acodec ? '(' + f.acodec + ')' : ''} ${humanFileSize(f.filesize)}`}
-                </option>
-              ))}
-            </select>
-
-            {audioFormats && audioFormats.length > 0 && (
-              <>
-                <label className="cg-label" style={{ marginTop: 8 }}>Audio format</label>
-                <select className="cg-input" value={selectedAudioFormat} onChange={(e) => setSelectedAudioFormat(e.target.value)}>
-                  <option value="">-- select audio --</option>
-                  {audioFormats.map((f, i) => (
-                    <option key={i} value={f.format_id || f.FormatID || i}>
-                      {`${f.ext || f.Ext || ''} ${f.acodec ? '(' + f.acodec + ')' : ''} ${humanFileSize(f.filesize)}`}
-                    </option>
-                  ))}
-                </select>
-              </>
-            )}
-
-            <div style={{ marginTop: 12 }}>
-              <button className="cg-btn" onClick={handleDownload} disabled={loading || (!selectedFormat && !selectedAudioFormat)}>{loading ? 'Downloading...' : 'Download'}</button>
-            </div>
-
-            <label style={{ display: 'block', marginTop: '8px' }}>
-              <input
-                type="checkbox"
-                checked={store}
-                onChange={(e) => setStore(e.target.checked)}
-                style={{ marginRight: '6px' }}
-              />
-              Store locally? <Help text={"If checked, the server will store the file and return links. Otherwise a direct download will be performed."} />
-            </label>
-
-          </div>
+          </>
         )}
 
+        <label className="cg-label" style={{marginTop:8}}>Audio bitrate (optional)</label>
+        <select className="cg-input" value={audioQuality} onChange={(e)=>setAudioQuality(e.target.value)}>
+          <option value="">(auto)</option>
+          {AUDIO_BITRATES.map(b=> <option key={b} value={b}>{b} kbps</option>)}
+        </select>
+
+        <button className="cg-btn" type="submit" disabled={downloading} style={{marginTop:12}}>
+          {downloading ? 'Downloading...' : 'Start'}
+        </button>
+
+        <label style={{ display: 'block', marginTop: '8px' }}>
+          <input type="checkbox" checked={store} onChange={(e)=>setStore(e.target.checked)} style={{marginRight:6}} />
+          Store on server? <Help text={'If checked each file is stored server-side and returned as JSON instead of triggering a direct browser download.'} />
+        </label>
       </form>
 
-      {error && <div className="cg-error">{error}</div>}
+      {error && <div className="cg-error" style={{marginTop:12}}>{error}</div>}
 
-      {result && (
-        <div className="cg-results">
-          <h3>Results:</h3>
+      <div style={{marginTop:16}}>
+        <h4>Logs</h4>
+        <div style={{background:'#111',color:'#0f0',padding:10,fontFamily:'monospace',fontSize:12,maxHeight:200,overflowY:'auto',borderRadius:4}}>
+          {logs.length===0 && <div>(empty)</div>}
+          {logs.map((l,i)=><div key={i}>{l}</div>)}
+        </div>
+      </div>
+
+      {store && storedFiles.length>0 && (
+        <div className="cg-results" style={{marginTop:20}}>
+          <h3>Stored Files:</h3>
           <ul className="cg-list">
-            {result.map((file, index) => (
-              <li key={index}>
-                <a href={file.url} target="_blank" rel="noopener noreferrer">
-                  {file.Filename}
-                </a>
-                <strong>{file.size}</strong>
+            {storedFiles.map((f,i)=> (
+              <li key={i}>
+                <a href={f.url || f.URL} target="_blank" rel="noopener noreferrer">{f.Filename || f.filename}</a>
+                <strong>{f.size || f.Size}</strong>
               </li>
             ))}
           </ul>
