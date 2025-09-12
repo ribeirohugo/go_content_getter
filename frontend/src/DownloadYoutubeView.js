@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Help from "./Help";
-import { fetchVideoInfo, downloadVideo } from "./api";
+import { fetchYoutubeInfo, downloadYoutube } from "./api";
 
 function humanFileSize(bytes) {
   if (!bytes || bytes === 0) return "-";
@@ -15,7 +15,7 @@ function humanFileSize(bytes) {
   return bytes.toFixed(1) + " " + units[u];
 }
 
-export default function DownloadVideoView() {
+export default function DownloadYoutubeView() {
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -46,7 +46,7 @@ export default function DownloadVideoView() {
 
     setLoading(true);
     try {
-      const res = await fetchVideoInfo({ url });
+      const res = await fetchYoutubeInfo({ url });
       if (!res.ok) {
         try {
           const d = await res.json();
@@ -135,7 +135,7 @@ export default function DownloadVideoView() {
         store: store,
       };
 
-      const res = await downloadVideo(payload);
+      const res = await downloadYoutube(payload);
 
       if (!res.ok) {
         try {
