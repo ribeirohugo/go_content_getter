@@ -66,9 +66,11 @@ func (h *HttpServer) InitiateServer() error {
 		// Health endpoint
 		api.GET("/health", h.HealthHandler)
 
-		// Youtube
-		api.POST("/video/info", h.GetVideoInfoHandler)
+		// Video
 		api.POST("/video/download", h.DownloadVideoHandler)
+		api.POST("/youtube/info", h.GetYoutubeInfoHandler)
+		api.POST("/youtube/youtube", h.DownloadYoutubeHandler)
+
 	}
 
 	err := router.Run(h.host)

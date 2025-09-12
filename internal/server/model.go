@@ -41,16 +41,25 @@ type VideoInfoRequest struct {
 	URL string `json:"url"`
 }
 
-// VideoInfoResponse represents the response containing youtube video metadata
-type VideoInfoResponse struct {
+// YoutubeInfoResponse represents the response containing youtube video metadata
+type YoutubeInfoResponse struct {
 	Video video.Video `json:"video"`
 }
 
-// VideoDownloadRequest represents the request body for downloading a youtube/video format
-type VideoDownloadRequest struct {
+// YoutubeRequest represents the request body for downloading a youtube/video format
+type YoutubeRequest struct {
 	URL         string `json:"url"`
 	VideoFormat string `json:"videoFormat"`
 	AudioFormat string `json:"audioFormat"`
 	Title       string `json:"title"`
 	Store       bool   `json:"store"`
+}
+
+// VideoDownloadRequest represents the request body for downloading a video
+type VideoDownloadRequest struct {
+	URL          string `json:"url"`
+	VideoQuality string `json:"videoQuality"`
+	AudioQuality string `json:"audioQuality"`
+	Format       string `json:"format"`
+	Store        bool   `json:"store"`
 }
