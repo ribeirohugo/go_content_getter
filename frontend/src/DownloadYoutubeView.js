@@ -180,7 +180,7 @@ export default function DownloadYoutubeView() {
 
   return (
     <div className="cg-card">
-      <div className="cg-title">Download Video</div>
+      <div className="cg-title">Youtube Getter</div>
       <form onSubmit={(e) => { e.preventDefault(); }} autoComplete="off">
         <label className="cg-label">Video URL: <Help text={"Paste the video URL (YouTube or similar) and press 'Get info' to list available formats."} /></label>
         <input

@@ -46,3 +46,11 @@ export async function downloadYoutube(payload) {
     body: JSON.stringify(payload),
   });
 }
+
+export async function downloadVideo(payload) {
+  return fetch(ENDPOINTS.VIDEO_DOWNLOAD, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+}
