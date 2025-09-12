@@ -135,15 +135,15 @@ func (h *HttpServer) LoadPatternsHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, patterns.PatternMap)
 }
 
-// GetVideoInfoHandler returns video metadata for a given URL.
-func (h *HttpServer) GetVideoInfoHandler(c *gin.Context) {
+// GetYoutubeInfoHandler returns video metadata for a given URL.
+func (h *HttpServer) GetYoutubeInfoHandler(c *gin.Context) {
 	var req VideoInfoRequest
 	if err := c.ShouldBindJSON(&req); err != nil || req.URL == "" {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid or missing url in body"})
 		return
 	}
 
-	y := video.NewYoutube()
+	y := video.NewGetter()
 	videoInfo, err := y.GetVideoInfo(req.URL)
 	if err != nil {
 		log.Println(err.Error())
@@ -151,19 +151,19 @@ func (h *HttpServer) GetVideoInfoHandler(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, VideoInfoResponse{Video: videoInfo})
+	c.JSON(http.StatusOK, YoutubeInfoResponse{Video: videoInfo})
 }
 
-// DownloadVideoHandler allows to download video or audio.
-func (h *HttpServer) DownloadVideoHandler(c *gin.Context) {
-	var req VideoDownloadRequest
+// DownloadYoutubeHandler allows to download video or audio.
+func (h *HttpServer) DownloadYoutubeHandler(c *gin.Context) {
+	var req YoutubeRequest
 	if err := c.ShouldBindJSON(&req); err != nil || req.URL == "" {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid or missing fields in body"})
 		return
 	}
 
-	y := video.NewYoutube()
-	data, err := y.DownloadVideo(req.URL, req.VideoFormat, req.AudioFormat)
+	videoGetter := video.NewGetter()
+	data, err := videoGetter.DownloadYoutubeVideo(req.URL, req.VideoFormat, req.AudioFormat)
 	if err != nil {
 		log.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
@@ -176,10 +176,57 @@ func (h *HttpServer) DownloadVideoHandler(c *gin.Context) {
 		if title != "" {
 			filename = fmt.Sprintf("%s.mp4", title)
 		}
-	} else if v, err := y.GetVideoInfo(req.URL); err == nil && v.Title != "" {
+	} else if v, err := videoGetter.GetVideoInfo(req.URL); err == nil && v.Title != "" {
 		title := strings.ReplaceAll(v.Title, "/", "_")
 		filename = fmt.Sprintf("%s.mp4", title)
 	}
+
+	if req.Store {
+		// store file locally
+		f := model.File{Filename: filename, Content: data}
+		if err := store.File(h.path, "", f); err != nil {
+			log.Println(err.Error())
+			c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, ContentResponse{Files: []model.File{f}})
+		return
+	}
+
+	files := []model.File{{Filename: filename, Content: data}}
+
+	zipData, err := file.ZipFiles(files)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+	}
+
+	// return binary for direct download
+	c.Header("Content-Type", "application/octet-stream")
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
+	c.Data(http.StatusOK, "application/octet-stream", zipData)
+}
+
+// DownloadVideoHandler allows to download video or audio.
+func (h *HttpServer) DownloadVideoHandler(c *gin.Context) {
+	var req VideoDownloadRequest
+	if err := c.ShouldBindJSON(&req); err != nil || req.URL == "" {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid or missing fields in body"})
+		return
+	}
+
+	videoGetter := video.NewGetter()
+	data, err := videoGetter.DownloadVideo(req.URL, req.VideoQuality, req.AudioQuality)
+	if err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+		return
+	}
+
+	// yt-dlp --get-title https://www.youtube.com/watch?v=XXXXXXXXXXX
+
+	filename := "video.mp4"
 
 	if req.Store {
 		// store file locally
