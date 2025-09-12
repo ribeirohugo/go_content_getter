@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Help from './Help';
 import { downloadVideo } from './api';
 
@@ -68,6 +68,12 @@ export default function DownloadVideoView() {
     setDownloading(false);
   };
 
+  useEffect(() => {
+    if (format === 'mp3' && videoQuality) {
+      setVideoQuality('');
+    }
+  }, [format, videoQuality]);
+
   return (
     <div className="cg-card">
       <div className="cg-title">Video / Audio Download</div>
@@ -102,11 +108,15 @@ export default function DownloadVideoView() {
         {/* Hidden field for potential form compatibility */}
         <input type="hidden" value={format} readOnly />
 
-        <label className="cg-label" style={{marginTop:8}}>Video quality (optional)</label>
-        <select className="cg-input" value={videoQuality} onChange={(e)=>setVideoQuality(e.target.value)}>
-          <option value="">(auto)</option>
-          {VIDEO_QUALITIES.map(q=> <option key={q} value={q}>{q}</option>)}
-        </select>
+        {format === 'mp4' && (
+          <>
+            <label className="cg-label" style={{marginTop:8}}>Video quality (optional)</label>
+            <select className="cg-input" value={videoQuality} onChange={(e)=>setVideoQuality(e.target.value)}>
+              <option value="">(auto)</option>
+              {VIDEO_QUALITIES.map(q=> <option key={q} value={q}>{q}</option>)}
+            </select>
+          </>
+        )}
 
         <label className="cg-label" style={{marginTop:8}}>Audio bitrate (optional)</label>
         <select className="cg-input" value={audioQuality} onChange={(e)=>setAudioQuality(e.target.value)}>

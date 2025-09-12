@@ -211,37 +211,61 @@ func (h *HttpServer) DownloadYoutubeHandler(c *gin.Context) {
 // DownloadVideoHandler allows to download video or audio.
 func (h *HttpServer) DownloadVideoHandler(c *gin.Context) {
 	var req VideoDownloadRequest
-	if err := c.ShouldBindJSON(&req); err != nil || req.URL == "" {
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid or missing fields in body"})
 		return
 	}
 
 	videoGetter := video.NewGetter()
-	data, err := videoGetter.DownloadVideo(req.URL, req.VideoQuality, req.AudioQuality)
-	if err != nil {
-		log.Println(err.Error())
-		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
-		return
-	}
+	var files []model.File
 
-	// yt-dlp --get-title https://www.youtube.com/watch?v=XXXXXXXXXXX
+	for _, url := range req.URLs {
+		var (
+			data []byte
+			err  error
+		)
 
-	filename := "video.mp4"
-
-	if req.Store {
-		// store file locally
-		f := model.File{Filename: filename, Content: data}
-		if err := store.File(h.path, "", f); err != nil {
-			log.Println(err.Error())
-			c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
-			return
+		if req.Format == "mp3" {
+			data, err = videoGetter.DownloadAudio(url, req.AudioQuality)
+			if err != nil {
+				log.Println(err.Error())
+				c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+				return
+			}
+		} else {
+			data, err = videoGetter.DownloadVideo(url, req.VideoQuality, req.AudioQuality)
+			if err != nil {
+				log.Println(err.Error())
+				c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+				return
+			}
 		}
 
-		c.JSON(http.StatusOK, ContentResponse{Files: []model.File{f}})
-		return
+		filename, err := videoGetter.GetTitle(url)
+		if err != nil {
+			log.Println(err.Error())
+		}
+
+		filename = fmt.Sprintf("%s.%s", filename, req.Format)
+
+		newFile := model.File{Filename: filename, Content: data}
+
+		if req.Store {
+			// store file locally
+			if err := store.File(h.path, "", newFile); err != nil {
+				log.Println(err.Error())
+				c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
+				return
+			}
+		} else {
+			files = append(files, newFile)
+		}
 	}
 
-	files := []model.File{{Filename: filename, Content: data}}
+	if req.Store {
+		c.JSON(http.StatusOK, ContentResponse{Files: files})
+		return
+	}
 
 	zipData, err := file.ZipFiles(files)
 	if err != nil {
@@ -251,6 +275,6 @@ func (h *HttpServer) DownloadVideoHandler(c *gin.Context) {
 
 	// return binary for direct download
 	c.Header("Content-Type", "application/octet-stream")
-	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", "files.zip"))
 	c.Data(http.StatusOK, "application/octet-stream", zipData)
 }
