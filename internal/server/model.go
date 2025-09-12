@@ -57,9 +57,9 @@ type YoutubeRequest struct {
 
 // VideoDownloadRequest represents the request body for downloading a video
 type VideoDownloadRequest struct {
-	URL          string `json:"url"`
-	VideoQuality string `json:"videoQuality"`
-	AudioQuality string `json:"audioQuality"`
-	Format       string `json:"format"`
-	Store        bool   `json:"store"`
+	URLs         []string `json:"urls"`
+	VideoQuality string   `json:"videoQuality"`
+	AudioQuality string   `json:"audioQuality"`
+	Format       string   `json:"format"`
+	Store        bool     `json:"store"`
 }
