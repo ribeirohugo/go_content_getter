@@ -1,6 +1,7 @@
 package file
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -21,4 +22,11 @@ func SanitizeFilename(name string) string {
 		}
 	}
 	return b.String()
+}
+
+// CreateFilename uses filename and extension and finally sanitizes, returning final filename.
+func CreateFilename(filename, extension string) string {
+	filename = fmt.Sprintf("%s.%s", filename, extension)
+
+	return SanitizeFilename(filename)
 }
