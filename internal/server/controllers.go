@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -170,16 +169,17 @@ func (h *HttpServer) DownloadYoutubeHandler(c *gin.Context) {
 		return
 	}
 
-	filename := "video.mp4"
-	if req.Title != "" {
-		title := strings.ReplaceAll(req.Title, "/", "_")
-		if title != "" {
-			filename = fmt.Sprintf("%s.mp4", title)
-		}
-	} else if v, err := videoGetter.GetVideoInfo(req.URL); err == nil && v.Title != "" {
-		title := strings.ReplaceAll(v.Title, "/", "_")
-		filename = fmt.Sprintf("%s.mp4", title)
+	filename, err := videoGetter.GetTitle(req.URL)
+	if err != nil {
+		log.Println(err.Error())
 	}
+
+	format := file.MP4
+	if req.VideoFormat == "" {
+		format = file.MP3
+	}
+
+	filename = file.CreateFilename(filename, format)
 
 	if req.Store {
 		// store file locally
@@ -246,7 +246,7 @@ func (h *HttpServer) DownloadVideoHandler(c *gin.Context) {
 			log.Println(err.Error())
 		}
 
-		filename = fmt.Sprintf("%s.%s", filename, req.Format)
+		filename = file.CreateFilename(filename, req.Format)
 
 		newFile := model.File{Filename: filename, Content: data}
 
