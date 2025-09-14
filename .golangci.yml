@@ -52,6 +52,8 @@ linters:
             - [ "HTTP" ] # AllowList
             - [ ] # DenyList
             - - upperCaseConst: true # Extra parameter (upperCaseConst|skipPackageNameChecks)
+        - name: exported
+          disabled: false
 
   # Defines a set of rules to ignore issues.
   # It does not skip the analysis, and so does not ignore "typecheck" errors.
