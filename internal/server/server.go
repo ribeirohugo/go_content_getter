@@ -17,6 +17,7 @@ type Source interface {
 	GetAndStore(string) ([]model.File, error)
 }
 
+// HttpServer holds content getter server data and methods.
 type HttpServer struct {
 	host                string
 	path                string
@@ -69,7 +70,7 @@ func (h *HttpServer) InitiateServer() error {
 		// Video
 		api.POST("/video/download", h.DownloadVideoHandler)
 		api.POST("/youtube/info", h.GetYoutubeInfoHandler)
-		api.POST("/youtube/youtube", h.DownloadYoutubeHandler)
+		api.POST("/youtube/download", h.DownloadYoutubeHandler)
 	}
 
 	err := router.Run(h.host)

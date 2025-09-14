@@ -12,6 +12,7 @@ const (
 	filePermissions = 0o750
 )
 
+// File allows to store a file for a given directory path and folder.
 func File(path, folder string, file model.File) error {
 	fileDir := filepath.Join(path, folder)
 
@@ -29,6 +30,7 @@ func File(path, folder string, file model.File) error {
 	return err
 }
 
+// All allows to store many files for a given directory path and folder.
 func All(path, folder string, files []model.File) error {
 	fileDir := filepath.Join(path, folder)
 

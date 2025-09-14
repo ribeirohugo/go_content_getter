@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 
@@ -115,7 +114,7 @@ func (h *HttpServer) DownloadURLsHandler(c *gin.Context) {
 	// Compress files into a zip and return as binary so frontend can download it
 	compressedFiles, err := file.ZipFiles(allFiles)
 	if err != nil {
-		log.Println(err.Error())
+		log.Printf("compressing failed: %v\n", err.Error())
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
 		return
 	}
@@ -170,16 +169,17 @@ func (h *HttpServer) DownloadYoutubeHandler(c *gin.Context) {
 		return
 	}
 
-	filename := "video.mp4"
-	if req.Title != "" {
-		title := strings.ReplaceAll(req.Title, "/", "_")
-		if title != "" {
-			filename = fmt.Sprintf("%s.mp4", title)
-		}
-	} else if v, err := videoGetter.GetVideoInfo(req.URL); err == nil && v.Title != "" {
-		title := strings.ReplaceAll(v.Title, "/", "_")
-		filename = fmt.Sprintf("%s.mp4", title)
+	filename, err := videoGetter.GetTitle(req.URL)
+	if err != nil {
+		log.Println(err.Error())
 	}
+
+	extension := file.MP4
+	if req.VideoFormat == "" {
+		extension = file.MP3
+	}
+
+	filename = file.CreateFilename(filename, extension)
 
 	if req.Store {
 		// store file locally
@@ -204,7 +204,7 @@ func (h *HttpServer) DownloadYoutubeHandler(c *gin.Context) {
 
 	// return binary for direct download
 	c.Header("Content-Type", "application/octet-stream")
-	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", filename))
+	c.Header("Content-Disposition", "attachment; filename=\"files.zip\"")
 	c.Data(http.StatusOK, "application/octet-stream", zipData)
 }
 
@@ -225,7 +225,7 @@ func (h *HttpServer) DownloadVideoHandler(c *gin.Context) {
 			err  error
 		)
 
-		if req.Format == "mp3" {
+		if req.Format == file.MP3 {
 			data, err = videoGetter.DownloadAudio(url, req.AudioQuality)
 			if err != nil {
 				log.Println(err.Error())
@@ -246,7 +246,7 @@ func (h *HttpServer) DownloadVideoHandler(c *gin.Context) {
 			log.Println(err.Error())
 		}
 
-		filename = fmt.Sprintf("%s.%s", filename, req.Format)
+		filename = file.CreateFilename(filename, req.Format)
 
 		newFile := model.File{Filename: filename, Content: data}
 
@@ -257,9 +257,9 @@ func (h *HttpServer) DownloadVideoHandler(c *gin.Context) {
 				c.JSON(http.StatusInternalServerError, ErrorResponse{Error: err.Error()})
 				return
 			}
-		} else {
-			files = append(files, newFile)
 		}
+
+		files = append(files, newFile)
 	}
 
 	if req.Store {
@@ -275,6 +275,6 @@ func (h *HttpServer) DownloadVideoHandler(c *gin.Context) {
 
 	// return binary for direct download
 	c.Header("Content-Type", "application/octet-stream")
-	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", "files.zip"))
+	c.Header("Content-Disposition", "attachment; filename=\"files.zip\"")
 	c.Data(http.StatusOK, "application/octet-stream", zipData)
 }
