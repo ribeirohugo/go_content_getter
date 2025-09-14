@@ -14,19 +14,12 @@ func SanitizeFilename(name string) string {
 	// Trim spaces at start/end
 	safe = strings.TrimSpace(safe)
 
-	// Keep only runes representable in ISO-8859-1 (Latin-1) while preserving them
-	var b strings.Builder
-	for _, r := range safe {
-		if r <= 0xFF { // Latin-1 range
-			b.WriteRune(r)
-		}
-	}
-	return b.String()
+	return safe
 }
 
 // CreateFilename uses filename and extension and finally sanitizes, returning final filename.
 func CreateFilename(filename, extension string) string {
 	filename = fmt.Sprintf("%s.%s", filename, extension)
 
-	return SanitizeFilename(filename)
+	return filename
 }

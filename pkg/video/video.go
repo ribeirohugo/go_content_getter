@@ -4,8 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"os/exec"
+
+	"golang.org/x/text/encoding/charmap"
+	"golang.org/x/text/transform"
 
 	"github.com/ribeirohugo/go_content_getter/internal/file"
 )
@@ -114,7 +118,13 @@ func (y Getter) GetTitle(url string) (string, error) {
 		return "", fmt.Errorf("yt-dlp error: %v", err)
 	}
 
-	sanitizedFilename := file.SanitizeFilename(out.String())
+	reader := transform.NewReader(bytes.NewReader(out.Bytes()), charmap.ISO8859_1.NewDecoder())
+	utf8Output, err := io.ReadAll(reader)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	return sanitizedFilename, nil
+	sanitized := file.SanitizeFilename(string(utf8Output))
+
+	return sanitized, nil
 }
