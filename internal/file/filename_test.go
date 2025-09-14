@@ -63,3 +63,63 @@ func TestSanitizeFilename(t *testing.T) {
 		})
 	}
 }
+
+func TestCreateFilename(t *testing.T) {
+	cases := []struct {
+		name     string
+		filename string
+		ext      string
+		expected string
+	}{
+		{
+			name:     "basic join",
+			filename: "file",
+			ext:      "txt",
+			expected: "file.txt",
+		},
+		{
+			name:     "empty extension",
+			filename: "file",
+			ext:      "",
+			expected: "file.",
+		},
+		{
+			name:     "empty filename",
+			filename: "",
+			ext:      "txt",
+			expected: ".txt",
+		},
+		{
+			name:     "both empty",
+			filename: "",
+			ext:      "",
+			expected: ".",
+		},
+		{
+			name:     "duplicate extension not removed",
+			filename: "video.mp4",
+			ext:      "mp3",
+			expected: "video.mp4.mp3",
+		},
+		{
+			name:     "extension starting with dot causes double dot",
+			filename: "video",
+			ext:      ".mp4",
+			expected: "video..mp4",
+		},
+		{
+			name:     "no sanitization performed inside CreateFilename",
+			filename: "my:file",
+			ext:      "mp*4",
+			expected: "my:file.mp*4",
+		},
+	}
+
+	for _, tc := range cases {
+		c := tc
+		t.Run(c.name, func(t *testing.T) {
+			got := CreateFilename(c.filename, c.ext)
+			assert.Equal(t, c.expected, got)
+		})
+	}
+}
