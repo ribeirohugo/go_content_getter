@@ -14,6 +14,7 @@ import (
 	"github.com/ribeirohugo/go_content_getter/internal/file"
 )
 
+// GetVideoInfo returns video information for a given video URL.
 func (y Getter) GetVideoInfo(url string) (Video, error) {
 	cmd := exec.Command("yt-dlp", "-j", url)
 
@@ -30,6 +31,7 @@ func (y Getter) GetVideoInfo(url string) (Video, error) {
 	return video, nil
 }
 
+// DownloadYoutubeVideo allows to get Youtube video stream.
 func (y Getter) DownloadYoutubeVideo(url, videoFormat, audioFormat string) ([]byte, error) {
 	format := fmt.Sprintf("%s+%s", videoFormat, audioFormat)
 	if videoFormat == "" {
@@ -50,6 +52,7 @@ func (y Getter) DownloadYoutubeVideo(url, videoFormat, audioFormat string) ([]by
 	return downloadBytes(cmd)
 }
 
+// DownloadVideo allows to get video stream.
 func (y Getter) DownloadVideo(url, videoQuality, audioQuality string) ([]byte, error) {
 	format := fmt.Sprintf(
 		"bestvideo[ext=mp4][height<=%s]+bestaudio[abr<=%s]/best[ext=mp4][height<=%s]",
@@ -69,6 +72,7 @@ func (y Getter) DownloadVideo(url, videoQuality, audioQuality string) ([]byte, e
 	return downloadBytes(cmd)
 }
 
+// DownloadAudio allows to get audio stream.
 func (y Getter) DownloadAudio(url, audioFormat string) ([]byte, error) {
 	format := fmt.Sprintf(
 		"bestaudio[abr<=%s]/best[abr<=%s]",
@@ -103,6 +107,7 @@ func downloadBytes(cmd *exec.Cmd) ([]byte, error) {
 	return out.Bytes(), nil
 }
 
+// GetTitle allows to get title string for a given video URL.
 func (y Getter) GetTitle(url string) (string, error) {
 	cmd := exec.Command("yt-dlp", "--get-title", url)
 

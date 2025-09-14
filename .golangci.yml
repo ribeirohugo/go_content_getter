@@ -75,7 +75,6 @@ linters:
     # Predefined exclusion rules.
     # Default: []
     presets:
-      - comments
       - std-error-handling
       - common-false-positives
       - legacy

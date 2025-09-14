@@ -9,6 +9,7 @@ import (
 	"github.com/ribeirohugo/go_content_getter/pkg/model"
 )
 
+// GetAll allows to extract all targets for a given model.Page and a regex pattern string.
 func GetAll(page model.Page, pattern string) ([]model.Target, error) {
 	var targets []model.Target
 

@@ -17,6 +17,7 @@ type Source interface {
 	GetAndStore(string) ([]model.File, error)
 }
 
+// HttpServer holds content getter server data and methods.
 type HttpServer struct {
 	host                string
 	path                string

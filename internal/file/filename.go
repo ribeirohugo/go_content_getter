@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// SanitizeFilename allows to exclude invalid OS path characters and trims filename spaces.
 func SanitizeFilename(name string) string {
 	// Define invalid characters for most filesystems: \ / : * ? " < > |
 	re := regexp.MustCompile(`[\\/:*?"<>|]`)

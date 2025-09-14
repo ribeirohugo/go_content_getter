@@ -5,8 +5,10 @@ import (
 	"os/exec"
 )
 
+// Getter is the video struct that holds video download methods and dependencies.
 type Getter struct{}
 
+// NewGetter is a Getter constructor.
 func NewGetter() Getter {
 	dependencies := []string{"ffmpeg", "yt-dlp"}
 
@@ -26,6 +28,7 @@ func checkDependency(name string) bool {
 	return err == nil
 }
 
+// Video struct is a Youtube video stream data struct.
 type Video struct {
 	ID          string   `json:"id"`
 	Title       string   `json:"title"`
@@ -41,6 +44,7 @@ type Video struct {
 	Formats     []Format `json:"formats"`
 }
 
+// Format is a Video format data struct.
 type Format struct {
 	FormatID string  `json:"format_id"`
 	Ext      string  `json:"ext"`

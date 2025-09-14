@@ -39,6 +39,7 @@ func Target(target model.Target) (model.File, error) {
 	return model.File{}, fmt.Errorf("error response status: %s", response.Status)
 }
 
+// ManyTargets allows to download many model.Target, and returns their file data.
 func ManyTargets(targets []model.Target) ([]model.File, error) {
 	var files []model.File
 
