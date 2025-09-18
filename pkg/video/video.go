@@ -15,7 +15,7 @@ import (
 )
 
 // GetVideoInfo returns video information for a given video URL.
-func (y Getter) GetVideoInfo(url string) (Video, error) {
+func (g Getter) GetVideoInfo(url string) (Video, error) {
 	cmd := exec.Command("yt-dlp", "-j", url)
 
 	data, err := cmd.Output()
@@ -32,7 +32,7 @@ func (y Getter) GetVideoInfo(url string) (Video, error) {
 }
 
 // DownloadYoutubeVideo allows to get Youtube video stream.
-func (y Getter) DownloadYoutubeVideo(url, videoFormat, audioFormat string) ([]byte, error) {
+func (g Getter) DownloadYoutubeVideo(url, videoFormat, audioFormat string) ([]byte, error) {
 	format := fmt.Sprintf("%s+%s", videoFormat, audioFormat)
 	if videoFormat == "" {
 		format = audioFormat
@@ -53,7 +53,7 @@ func (y Getter) DownloadYoutubeVideo(url, videoFormat, audioFormat string) ([]by
 }
 
 // DownloadVideo allows to get video stream.
-func (y Getter) DownloadVideo(url, videoQuality, audioQuality string) ([]byte, error) {
+func (g Getter) DownloadVideo(url, videoQuality, audioQuality string) ([]byte, error) {
 	format := fmt.Sprintf(
 		"bestvideo[ext=mp4][height<=%s]+bestaudio[abr<=%s]/best[ext=mp4][height<=%s]",
 		videoQuality,
@@ -73,7 +73,7 @@ func (y Getter) DownloadVideo(url, videoQuality, audioQuality string) ([]byte, e
 }
 
 // DownloadAudio allows to get audio stream.
-func (y Getter) DownloadAudio(url, audioFormat string) ([]byte, error) {
+func (g Getter) DownloadAudio(url, audioFormat string) ([]byte, error) {
 	format := fmt.Sprintf(
 		"bestaudio[abr<=%s]/best[abr<=%s]",
 		audioFormat,
@@ -108,7 +108,7 @@ func downloadBytes(cmd *exec.Cmd) ([]byte, error) {
 }
 
 // GetTitle allows to get title string for a given video URL.
-func (y Getter) GetTitle(url string) (string, error) {
+func (g Getter) GetTitle(url string) (string, error) {
 	cmd := exec.Command("yt-dlp", "--get-title", url)
 
 	var out bytes.Buffer

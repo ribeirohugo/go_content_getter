@@ -9,6 +9,7 @@ import (
 
 	"github.com/ribeirohugo/go_content_getter/pkg/config"
 	"github.com/ribeirohugo/go_content_getter/pkg/model"
+	"github.com/ribeirohugo/go_content_getter/pkg/video"
 )
 
 // Source - content get methods interface
@@ -24,6 +25,8 @@ type HttpServer struct {
 	defaultRegexPattern string
 	defaultTitlePattern string
 
+	videoGetter video.GetterService
+
 	allowedOrigins []string
 
 	mux *http.ServeMux
@@ -38,6 +41,7 @@ func New(cfg config.Config) *HttpServer {
 		defaultTitlePattern: cfg.TitleRegex,
 		allowedOrigins:      cfg.AllowedOrigins,
 		mux:                 http.NewServeMux(),
+		videoGetter:         video.NewGetter(),
 	}
 
 	return s
