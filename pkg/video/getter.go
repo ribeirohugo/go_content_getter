@@ -5,19 +5,36 @@ import (
 	"os/exec"
 )
 
+const (
+	ffmpegDependency = "ffmpeg"
+	ytDlpDependency  = "yt-dlp"
+)
+
 // Getter is the video struct that holds video download methods and dependencies.
 type Getter struct{}
 
 // NewGetter is a Getter constructor.
-func NewGetter() Getter {
-	dependencies := []string{"ffmpeg", "yt-dlp"}
+func NewGetter() GetterService {
+	dependencies := []string{ffmpegDependency, ytDlpDependency}
+
+	invalid := Invalid{}
 
 	for _, dep := range dependencies {
 		if checkDependency(dep) {
 			log.Printf("%s is installed ✅\n", dep)
+			if dep == ffmpegDependency {
+				invalid.ffmpeg = true
+			}
+			if dep == ytDlpDependency {
+				invalid.ytDlp = true
+			}
 		} else {
 			log.Printf("%s is NOT installed ❌\n", dep)
 		}
+	}
+
+	if !invalid.ffmpeg || !invalid.ytDlp {
+		return invalid
 	}
 
 	return Getter{}
