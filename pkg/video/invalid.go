@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-const errorMessage = "ffmpeg and/or yt-dlp dependencies are not installed"
+const errorMessage = "ffmpeg and/or yt-dlp dependencies is/are not installed"
 
 type Invalid struct {
 	ffmpeg bool
