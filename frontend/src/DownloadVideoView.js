@@ -11,7 +11,7 @@ export default function DownloadVideoView() {
   const [urls, setUrls] = useState('');
   const [format, setFormat] = useState('mp4');
   const [videoQuality, setVideoQuality] = useState(''); // empty = auto
-  const [audioQuality, setAudioQuality] = useState(''); // empty = auto
+  const [audioQuality, setAudioQuality] = useState(''); // empty = auto / required for mp3
   const [store, setStore] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState('');
@@ -28,6 +28,8 @@ export default function DownloadVideoView() {
 
     const list = urls.split('\n').map(x=>x.trim()).filter(Boolean);
     if (!list.length) { setError('Enter at least one URL.'); return; }
+    if (format === 'mp4' && !videoQuality) { setError('Select a video quality.'); return; }
+    if (format === 'mp3' && !audioQuality) { setError('Select an audio quality.'); return; }
 
     setDownloading(true);
     for (const u of list) {
@@ -110,17 +112,17 @@ export default function DownloadVideoView() {
 
         {format === 'mp4' && (
           <>
-            <label className="cg-label" style={{marginTop:8}}>Video quality (optional)</label>
-            <select className="cg-input" value={videoQuality} onChange={(e)=>setVideoQuality(e.target.value)}>
-              <option value="">(auto)</option>
+            <label className="cg-label" style={{marginTop:8}}>Video quality (required)</label>
+            <select className="cg-input" value={videoQuality} required={format==='mp4'} onChange={(e)=>setVideoQuality(e.target.value)}>
+              <option value="" disabled>{'Select quality'}</option>
               {VIDEO_QUALITIES.map(q=> <option key={q} value={q}>{q}</option>)}
             </select>
           </>
         )}
 
-        <label className="cg-label" style={{marginTop:8}}>Audio bitrate (optional)</label>
-        <select className="cg-input" value={audioQuality} onChange={(e)=>setAudioQuality(e.target.value)}>
-          <option value="">(auto)</option>
+        <label className="cg-label" style={{marginTop:8}}>Audio Quality {format==='mp3' ? '(required)' : '(optional)'}</label>
+        <select className="cg-input" value={audioQuality} required={format==='mp3'} onChange={(e)=>setAudioQuality(e.target.value)}>
+          {format === 'mp3' ? <option value="" disabled>Select quality</option> : <option value="">(auto)</option>}
           {AUDIO_BITRATES.map(b=> <option key={b} value={b}>{b} kbps</option>)}
         </select>
 
