@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import './App.css';
 import DownloadURLsView from './DownloadURLsView';
 import DownloadContentView from './DownloadContentView';
@@ -9,91 +9,7 @@ const API_URL = process.env.REACT_APP_API_URL || "/api";
 
 function App() {
   const [view, setView] = useState('content');
-  const [urls] = useState("");
-  const [, setPatterns] = useState([]);
   const [navOpen, setNavOpen] = useState(false);
-
-  const [contentPatternSelect, setContentPatternSelect] = useState("");
-  const [contentPatternCustom] = useState("");
-
-  const [titlePatternSelect, setTitlePatternSelect] = useState("");
-  const [titlePatternCustom] = useState("");
-
-  const [, setLoading] = useState(false);
-  const [, setResult] = useState(null);
-  const [, setError] = useState("");
-
-  useEffect(() => {
-    fetch(`${API_URL}/patterns`)
-      .then((res) => res.json())
-      .then((data) => {
-        // data is expected to be an array of { Description, Regex }
-        setPatterns(Array.isArray(data) ? data : []);
-        if (Array.isArray(data) && data.length > 0) {
-          const firstRegex = data[0].Regex || data[0].regex || "";
-
-          // prefer "Image from src attribute" for content default when available
-          const imgSrc = data.find(
-            (p) => (p.Description || p.description || "") === "Image from src attribute"
-          );
-          const contentDefault = (imgSrc && (imgSrc.Regex || imgSrc.regex)) || firstRegex;
-
-          // prefer "HTML title" for title default when available
-          const htmlTitle = data.find(
-            (p) => (p.Description || p.description || "") === "HTML title"
-          );
-          const titleDefault = (htmlTitle && (htmlTitle.Regex || htmlTitle.regex)) || firstRegex;
-
-          setContentPatternSelect(contentDefault);
-          setTitlePatternSelect(titleDefault);
-        }
-      })
-      .catch(() => {});
-  }, []);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    setResult(null);
-    const urlList = urls
-      .split("\n")
-      .map((u) => u.trim())
-      .filter((u) => u);
-    if (urlList.length === 0) {
-      setError("Please enter at least one URL.");
-      setLoading(false);
-      return;
-    }
-
-    // Decide final patterns: if select is '__custom__' use custom value, otherwise use selected regex
-    const finalContentPattern = contentPatternSelect === "__custom__" ? contentPatternCustom : contentPatternSelect;
-    const finalTitlePattern = titlePatternSelect === "__custom__" ? titlePatternCustom : titlePatternSelect;
-
-    try {
-      const payload = {
-        urls: urlList,
-        contentPattern: finalContentPattern,
-        titlePattern: finalTitlePattern,
-      };
-      console.log('Request payload:', payload);
-      const res = await fetch(`${API_URL}/download-and-store`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      console.log('Response:', data);
-      if (!res.ok) {
-        setError(data.error || "Unknown error");
-      } else {
-        setResult(data.files || []);
-      }
-    } catch (err) {
-      setError("Network error");
-    }
-    setLoading(false);
-  };
 
   return (
     <>
