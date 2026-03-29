@@ -66,7 +66,7 @@ export default function DownloadYoutubeView() {
       // derive qualities (unique heights) and include audio option
       const qset = new Set();
       fmts.forEach((f) => {
-        if (!f || (f.height === 0 || !f.height) && f.acodec && !f.vcodec) {
+        if (!f || ((f.height === 0 || !f.height) && f.acodec && !f.vcodec)) {
           qset.add("audio");
         } else if (f.height) {
           qset.add(String(f.height));
