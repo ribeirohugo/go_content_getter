@@ -101,10 +101,10 @@ function App() {
         <div className="cg-navbar-content">
           <img src="/logo.svg" alt="CG Logo" className="cg-logo" />
           <div className={`cg-navbar-links ${navOpen ? 'open' : ''}`}>
-            <a href="#" className="cg-navbar-link" onClick={(e)=>{e.preventDefault(); setView('content'); setNavOpen(false);}}>Content</a>
-            <a href="#" className="cg-navbar-link" onClick={(e)=>{e.preventDefault(); setView('download-urls'); setNavOpen(false);}}>URLs</a>
-            <a href="#" className="cg-navbar-link" onClick={(e)=>{e.preventDefault(); setView('video'); setNavOpen(false);}}>Video</a>
-            <a href="#" className="cg-navbar-link" onClick={(e)=>{e.preventDefault(); setView('youtube'); setNavOpen(false);}}>YouTube</a>
+            <button type="button" className="cg-navbar-link" onClick={() => { setView('content'); setNavOpen(false); }}>Content</button>
+            <button type="button" className="cg-navbar-link" onClick={() => { setView('download-urls'); setNavOpen(false); }}>URLs</button>
+            <button type="button" className="cg-navbar-link" onClick={() => { setView('video'); setNavOpen(false); }}>Video</button>
+            <button type="button" className="cg-navbar-link" onClick={() => { setView('youtube'); setNavOpen(false); }}>YouTube</button>
           </div>
 
           <button className="cg-trigram" aria-label="Menu" onClick={() => setNavOpen(!navOpen)}>
