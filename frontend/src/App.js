@@ -9,19 +9,19 @@ const API_URL = process.env.REACT_APP_API_URL || "/api";
 
 function App() {
   const [view, setView] = useState('content');
-  const [urls, setUrls] = useState("");
-  const [patterns, setPatterns] = useState([]);
+  const [urls] = useState("");
+  const [, setPatterns] = useState([]);
   const [navOpen, setNavOpen] = useState(false);
 
   const [contentPatternSelect, setContentPatternSelect] = useState("");
-  const [contentPatternCustom, setContentPatternCustom] = useState("");
+  const [contentPatternCustom] = useState("");
 
   const [titlePatternSelect, setTitlePatternSelect] = useState("");
-  const [titlePatternCustom, setTitlePatternCustom] = useState("");
+  const [titlePatternCustom] = useState("");
 
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState("");
+  const [, setLoading] = useState(false);
+  const [, setResult] = useState(null);
+  const [, setError] = useState("");
 
   useEffect(() => {
     fetch(`${API_URL}/patterns`)
