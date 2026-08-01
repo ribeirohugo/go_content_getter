@@ -3,6 +3,7 @@
 
 # Production build
 /build
+/dist
 
 # Environment overrides (base .env is tracked)
 .env.local

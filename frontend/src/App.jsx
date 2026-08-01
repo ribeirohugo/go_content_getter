@@ -5,7 +5,7 @@ import DownloadContentView from './DownloadContentView';
 import DownloadYoutubeView from './DownloadYoutubeView';
 import DownloadVideoView from './DownloadVideoView';
 
-const API_URL = process.env.REACT_APP_API_URL || "/api";
+const API_URL = import.meta.env.VITE_API_URL || "/api";
 
 function App() {
   const [view, setView] = useState('content');

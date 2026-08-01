@@ -45,7 +45,7 @@ export default function DownloadVideoView() {
         const res = await downloadVideo(payload);
         if (!res.ok) {
           let msg = 'Download error';
-          try { const d = await res.json(); msg = d.error || msg; } catch(_){}
+          try { const d = await res.json(); msg = d.error || msg; } catch(_){ /* keep original message if parse fails */ }
           appendLog(`Error: ${msg}`); continue;
         }
         if (store) {
